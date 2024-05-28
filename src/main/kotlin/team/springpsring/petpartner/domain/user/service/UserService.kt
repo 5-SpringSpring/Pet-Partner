@@ -20,6 +20,7 @@ class UserService(
     private val jwtUtil: JwtUtil,
     private val encoder: BCHash,
 ){
+    //!!!GlobalExceptionHandler 적용 후 Exception 종류 개선해야함
 
     @Transactional
     fun signUpUser(request: SignUpUserRequest):Boolean{
@@ -29,22 +30,21 @@ class UserService(
         } catch (e: DataIntegrityViolationException) {
             throw ServiceException("Data Duplication")
         }
-        return true
+        return true//임의로 넣음. 팀원과 조정할 것
     }
 
     @Transactional
     fun logInUser(request: LogInUserRequest):String {
         return userRepository.findByLoginId(request.loginId)
             ?.let { user ->
-            if (!encoder.verifyPassword(request.password, user.password)) {
-                throw AuthenticationException("User Password Not Match")
-            }
-            jwtUtil.generateAccessToken("loginId", user.loginId)
+            if (encoder.verifyPassword(request.password, user.password)) {
+                jwtUtil.generateAccessToken("loginId", user.loginId)
+            }else throw AuthenticationException("User Password Not Match")
         } ?: throw EntityNotFoundException("User Not Found")
     }
 
     @Transactional
-    fun getUserIdFromToken(token:String):User {
+    fun validateLoginIdFromToken(token:String):User {
         return jwtUtil.validateToken(token).let {
             userRepository.findByLoginId(it)
                 ?: throw EntityNotFoundException("마 그런 아 없다")
