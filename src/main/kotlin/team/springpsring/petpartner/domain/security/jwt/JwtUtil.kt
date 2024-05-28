@@ -3,7 +3,7 @@ package team.springpsring.petpartner.domain.security.jwt
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import org.springframework.context.annotation.Bean
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
 import java.time.Duration
@@ -13,12 +13,18 @@ import javax.crypto.SecretKey
 
 @Component
 class JwtUtil {
-    private val ISSUER="team.sparta.com"
-    private val SECRET="5FZV1z9KHf8sv3bXxG2d9kL8Yd1MhX5PsmL4uQJH9Zge"
-    private val ACCESS_TOKEN_EXPIRATION_HOUR:Long=168
+
+    @Value("\${SECURITY_JWT_ISSUER}")
+    lateinit var issuer: String
+
+    @Value("\${SECURITY_JWT_SECRET}")
+    lateinit var secret: String
+
+    @Value("\${SECURITY_JWT_ACCESS_TOKEN_EXPIRATION_HOUR}")
+    var accessTokenExpirationHour: Long = 0
 
     fun validateToken(token:String): String{
-        val key = Keys.hmacShaKeyFor(SECRET.toByteArray(StandardCharsets.UTF_8))
+        val key = Keys.hmacShaKeyFor(secret.toByteArray(StandardCharsets.UTF_8))
         try {
             val claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token)
             return claims.payload["loginId"].toString()
@@ -28,7 +34,7 @@ class JwtUtil {
     }
 
     fun generateAccessToken(subject:String, loginId: String): String {
-        return generateToken(subject,loginId,Duration.ofHours(ACCESS_TOKEN_EXPIRATION_HOUR))
+        return generateToken(subject,loginId,Duration.ofHours(accessTokenExpirationHour))
     }
 
     private fun generateToken(subject:String, loginId: String, expirationPeriod:Duration?): String {
@@ -36,12 +42,12 @@ class JwtUtil {
             .add(mapOf("loginId" to loginId))
             .build()
 
-        val key: SecretKey =Keys.hmacShaKeyFor(SECRET.toByteArray(StandardCharsets.UTF_8))
+        val key: SecretKey =Keys.hmacShaKeyFor(secret.toByteArray(StandardCharsets.UTF_8))
         val now=Instant.now()
 
         return Jwts.builder()
             .subject(subject)
-            .issuer(ISSUER)
+            .issuer(issuer)
             .issuedAt(Date.from(now))
             .expiration(Date.from(now.plus(expirationPeriod)))
             .claims(claims)
