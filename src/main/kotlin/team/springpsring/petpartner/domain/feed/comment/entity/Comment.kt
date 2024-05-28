@@ -1,6 +1,7 @@
 package team.springpsring.petpartner.domain.feed.comment.entity
 
 import jakarta.persistence.*
+import team.springpsring.petpartner.domain.feed.comment.dto.CommentResponse
 import team.springpsring.petpartner.domain.feed.entity.Feed
 import java.time.LocalDateTime
 
@@ -17,11 +18,11 @@ class Comment (
     @Column(name = "body", nullable = false)
     var body:String,
 
-    @Column(name = "like", nullable = false)
-    var like:String,
+    @Column(name = "loves", nullable = false)
+    var loves :Int,
 
     @Column(name = "created_at", nullable = false)
-    var created: LocalDateTime,
+    var createdAt: LocalDateTime,
 
     @ManyToOne
     @JoinColumn(name = "feed_id", nullable = false)
@@ -30,4 +31,15 @@ class Comment (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id:Long?=null
+}
+
+fun Comment.toResponse()
+        : CommentResponse {
+    return CommentResponse(
+        id = id!!,
+        name = name,
+        body = body,
+        loves = loves,
+        createdAt = createdAt,
+    )
 }
