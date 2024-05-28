@@ -5,7 +5,7 @@ import team.springpsring.petpartner.domain.feed.entity.Feed
 import java.time.LocalDateTime
 
 @Entity
-@Table(name="Comment")
+@Table(name="comment")
 class Comment (
 
     @Column(name = "name", nullable = false)
