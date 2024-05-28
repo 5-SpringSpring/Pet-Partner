@@ -43,3 +43,6 @@ gradlew
 gradlew.bat
 settings.gradle.kts
 src/test
+
+###extra###
+.DS_Store
