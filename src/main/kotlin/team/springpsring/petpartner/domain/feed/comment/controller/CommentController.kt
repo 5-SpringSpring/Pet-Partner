@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*
 import team.springpsring.petpartner.domain.feed.comment.dto.CommentResponse
 import team.springpsring.petpartner.domain.feed.comment.dto.CreateCommentRequest
 import team.springpsring.petpartner.domain.feed.comment.dto.UpdateCommentRequest
+import team.springpsring.petpartner.domain.feed.comment.service.CommentService
 
 @RequestMapping("/feeds/{feedId}/comments")
 @RestController
