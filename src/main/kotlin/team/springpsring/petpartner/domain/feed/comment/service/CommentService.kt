@@ -1,24 +1,29 @@
 package team.springpsring.petpartner.domain.feed.comment.service
 
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import team.springpsring.petpartner.domain.feed.comment.dto.CommentResponse
 import team.springpsring.petpartner.domain.feed.comment.dto.CreateCommentRequest
 import team.springpsring.petpartner.domain.feed.comment.dto.UpdateCommentRequest
 import team.springpsring.petpartner.domain.feed.comment.entity.Comment
+import team.springpsring.petpartner.domain.feed.comment.entity.toResponse
+import team.springpsring.petpartner.domain.feed.comment.repository.CommentRepository
 import team.springpsring.petpartner.domain.feed.repository.FeedRepository
 
-class CommentService (private val feedRepository: FeedRepository, private val commentRepository:CommmentRepository){
+@Service
+class CommentService (private val feedRepository: FeedRepository, private val commentRepository: CommentRepository){
 
     @Transactional
     fun createComment(feedId:Long, createCommentRequest: CreateCommentRequest): CommentResponse {
         val feed = feedRepository.findByIdOrNull(feedId) ?: throw NullPointerException("Feed not found")
         val comment = Comment(
             createCommentRequest.name,
-            createCommentRequest.body,
             createCommentRequest.password,
+            createCommentRequest.body,
             loves = 0,
-            createCommentRequest.createdAt
+            createCommentRequest.createdAt,
+            feed
         )
         commentRepository.save(comment)
 
@@ -36,9 +41,8 @@ class CommentService (private val feedRepository: FeedRepository, private val co
             throw IllegalArgumentException("Can't update comment")
         }
 
-        val (body,createdAt) = updateCommentRequest
-        comment.body = body
-        comment.createdAt =createdAt
+        comment.body = updateCommentRequest.body
+        comment.createdAt =updateCommentRequest.createdAt
 
         return commentRepository.save(comment).toResponse()
     }
