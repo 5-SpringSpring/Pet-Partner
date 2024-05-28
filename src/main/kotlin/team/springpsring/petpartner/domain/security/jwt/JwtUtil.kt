@@ -1,43 +1,39 @@
 package team.springpsring.petpartner.domain.security.jwt
 
+import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
+import org.springframework.context.annotation.Bean
+import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
 import java.time.Duration
 import java.time.Instant
 import java.util.Date
 import javax.crypto.SecretKey
 
-object JwtUtil {
-    private const val ISSUER="team.sparta.com"
-    private const val SECRET="eyJhbGciOiJIUzI1NiJ9." +
-            "eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOi" +
-            "JJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJ" +
-            "blVzZSIsImV4cCI6MTcxNjUzNjAxMiwiaW" +
-            "F0IjoxNzE2NTM2MDEyfQ.7F62KfLxg2jY" +
-            "xWRPgyQGRzM22KhbE1KEQYeUHHfnsTY"
-    private const val ACCESS_TOKEN_EXPIRATION_HOUR:Long=168
+@Component
+class JwtUtil {
+    private val ISSUER="team.sparta.com"
+    private val SECRET="5FZV1z9KHf8sv3bXxG2d9kL8Yd1MhX5PsmL4uQJH9Zge"
+    private val ACCESS_TOKEN_EXPIRATION_HOUR:Long=168
 
-    fun validateToken(token:String): Boolean{
-       return kotlin.runCatching {
-           val key=Keys.hmacShaKeyFor(SECRET.toByteArray(StandardCharsets.UTF_8))
-           Jwts.parser().verifyWith(key).build().parseSignedClaims(token)
-       }.isSuccess
-    }
-
-    fun getUserIdFromToken(token: String): String? {
+    fun validateToken(token:String): String{
         val key = Keys.hmacShaKeyFor(SECRET.toByteArray(StandardCharsets.UTF_8))
-        val claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token)
-        return claims.payload["userId"].toString()
+        try {
+            val claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token)
+            return claims.payload["loginId"].toString()
+        } catch (e:Exception){
+            throw JwtException("Invalid JWT token")
+        }
     }
 
-    fun generateAccessToken(subject:String, userId: String): String {
-        return generateToken(subject,userId,Duration.ofHours(ACCESS_TOKEN_EXPIRATION_HOUR))
+    fun generateAccessToken(subject:String, loginId: String): String {
+        return generateToken(subject,loginId,Duration.ofHours(ACCESS_TOKEN_EXPIRATION_HOUR))
     }
 
-    private fun generateToken(subject:String, userId: String, expirationPeriod:Duration?): String {
+    private fun generateToken(subject:String, loginId: String, expirationPeriod:Duration?): String {
         val claims=Jwts.claims()
-            .add(mapOf("userId" to userId))
+            .add(mapOf("loginId" to loginId))
             .build()
 
         val key: SecretKey =Keys.hmacShaKeyFor(SECRET.toByteArray(StandardCharsets.UTF_8))

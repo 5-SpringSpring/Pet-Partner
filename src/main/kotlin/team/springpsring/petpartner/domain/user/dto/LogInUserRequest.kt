@@ -1,6 +1,6 @@
-package com.teamsparta.todoapp.domain.user.dto
+package team.springpsring.petpartner.domain.user.dto
 
 data class LogInUserRequest(
-    val userId: String,
-    val userPassword: String,
+    val loginId: String,
+    val password: String,
 )

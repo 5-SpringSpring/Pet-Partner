@@ -1,8 +1,8 @@
-package com.teamsparta.todoapp.domain.user.repository
+package team.springpsring.petpartner.domain.user.repository
 
-import com.teamsparta.todoapp.domain.user.model.User
+import team.springpsring.petpartner.domain.user.entity.User
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface UserRepository: JpaRepository<User, Long> {
-    fun findByUserId(userId: String): User?
+    fun findByLoginId(userId: String): User?
 }

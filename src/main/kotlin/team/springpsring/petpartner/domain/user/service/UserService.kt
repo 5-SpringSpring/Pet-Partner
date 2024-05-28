@@ -1,9 +1,9 @@
-package com.teamsparta.todoapp.domain.user.service
+package team.springpsring.petpartner.domain.user.service
 
-import com.teamsparta.todoapp.domain.user.dto.LogInUserRequest
-import com.teamsparta.todoapp.domain.user.dto.SignUpUserRequest
-import com.teamsparta.todoapp.domain.user.model.User
-import com.teamsparta.todoapp.domain.user.repository.UserRepository
+import team.springpsring.petpartner.domain.user.dto.LogInUserRequest
+import team.springpsring.petpartner.domain.user.dto.SignUpUserRequest
+import team.springpsring.petpartner.domain.user.dto.toEntity
+import team.springpsring.petpartner.domain.user.repository.UserRepository
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import org.hibernate.service.spi.ServiceException
@@ -11,42 +11,43 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import team.springpsring.petpartner.domain.security.hash.BCHash
 import team.springpsring.petpartner.domain.security.jwt.JwtUtil
+import team.springpsring.petpartner.domain.user.entity.User
 import javax.naming.AuthenticationException
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
     private val jwtUtil: JwtUtil,
-    private val passwordEncoder: BCHash,
+    private val encoder: BCHash,
 ){
 
     @Transactional
-    fun signUpUser(request: SignUpUserRequest) {
+    fun signUpUser(request: SignUpUserRequest):Boolean{
         try {
-            userRepository.save(
-                User(
-                    userId = request.userId,
-                    userPassword = BCHash.hashPassword(request.userPassword)
-                )
-            )
+            userRepository.save(request.toEntity(
+                encoder.hashPassword(request.password)))
         } catch (e: DataIntegrityViolationException) {
             throw ServiceException("Data Duplication")
         }
+        return true
     }
 
     @Transactional
     fun logInUser(request: LogInUserRequest):String {
-        val dbPassword = userRepository.findByUserId(request.userId)
-            ?: throw EntityNotFoundException("User Not Found")
-        if (BCHash.verifyPassword(request.userPassword, dbPassword.userPassword))
-        {
-            return JwtUtil.generateAccessToken("userId", request.userId)
-        }
-        else throw AuthenticationException("User Password Not Match")
+        return userRepository.findByLoginId(request.loginId)
+            ?.let { user ->
+            if (!encoder.verifyPassword(request.password, user.password)) {
+                throw AuthenticationException("User Password Not Match")
+            }
+            jwtUtil.generateAccessToken("loginId", user.loginId)
+        } ?: throw EntityNotFoundException("User Not Found")
     }
 
     @Transactional
-    fun getUserInfo(token:String): String{
-        return JwtUtil.getUserIdFromToken(token)!!
+    fun getUserIdFromToken(token:String):User {
+        return jwtUtil.validateToken(token).let {
+            userRepository.findByLoginId(it)
+                ?: throw EntityNotFoundException("마 그런 아 없다")
+        }
     }
 }

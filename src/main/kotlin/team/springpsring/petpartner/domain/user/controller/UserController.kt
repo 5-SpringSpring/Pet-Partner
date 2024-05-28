@@ -1,18 +1,19 @@
-package com.teamsparta.todoapp.domain.user.controller
+package team.springpsring.petpartner.domain.user.controller
 
-import com.teamsparta.todoapp.domain.user.dto.LogInUserRequest
-import com.teamsparta.todoapp.domain.user.dto.SignUpUserRequest
-import com.teamsparta.todoapp.domain.user.service.UserService
+
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import team.springpsring.petpartner.domain.user.dto.LogInUserRequest
+import team.springpsring.petpartner.domain.user.dto.SignUpUserRequest
+import team.springpsring.petpartner.domain.user.service.UserService
 
 @RequestMapping("/users")
 @RestController
 class UserController(private val userService: UserService) {
     @PostMapping("/signup")
     fun signUpUser(@RequestBody userRequest: SignUpUserRequest)
-    : ResponseEntity<Unit> {
+    : ResponseEntity<Any> {
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(userService.signUpUser(userRequest))
@@ -24,5 +25,12 @@ class UserController(private val userService: UserService) {
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(userService.logInUser(userRequest))
+    }
+
+    @GetMapping("/{token}")
+    fun getUser(@RequestParam("token") token: String): ResponseEntity<Any> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(userService.getUserIdFromToken(token))
     }
 }

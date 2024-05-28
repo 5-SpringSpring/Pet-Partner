@@ -1,8 +1,11 @@
 package team.springpsring.petpartner.domain.security.hash
 
 import org.mindrot.jbcrypt.BCrypt
+import org.springframework.stereotype.Component
 
-object BCHash {
+@Component
+class BCHash {
+
     fun hashPassword(password: String): String {
        return BCrypt.hashpw(password,BCrypt.gensalt())
     }
