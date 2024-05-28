@@ -4,8 +4,7 @@ package team.springpsring.petpartner.domain.user.controller
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import team.springpsring.petpartner.domain.user.dto.LogInUserRequest
-import team.springpsring.petpartner.domain.user.dto.SignUpUserRequest
+import team.springpsring.petpartner.domain.user.dto.*
 import team.springpsring.petpartner.domain.user.service.UserService
 
 @RequestMapping("/users")
@@ -27,10 +26,27 @@ class UserController(private val userService: UserService) {
             .body(userService.logInUser(userRequest))
     }
 
-    @GetMapping("/{token}")
-    fun getUser(@RequestParam("token") token: String): ResponseEntity<Any> {
+    @PostMapping("/userinfo")
+    fun getUserInfo(@RequestBody userInfoRequest: GetUserInfoRequest)
+    : ResponseEntity<UserResponse> {
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(userService.getUserIdFromToken(token))
+            .body(userService.getUserInfo(userInfoRequest))
+    }
+
+    @PatchMapping("/password")
+    fun updatePassword(@RequestBody updateRequest: UpdateUserPasswordRequest)
+            : ResponseEntity<Any> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(userService.updatePassword(updateRequest))
+    }
+
+    @DeleteMapping("/{loginId}")
+    fun logout(@RequestParam("loginId") loginId: String)
+            : ResponseEntity<Any> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(userService.logoutUser(loginId))
     }
 }
