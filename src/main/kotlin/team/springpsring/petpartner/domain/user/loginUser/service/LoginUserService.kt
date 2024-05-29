@@ -5,8 +5,6 @@ import jakarta.transaction.Transactional
 import org.hibernate.service.spi.ServiceException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
-import team.springpsring.petpartner.domain.user.dto.SignUpUserRequest
-import team.springpsring.petpartner.domain.user.dto.toEntity
 import team.springpsring.petpartner.domain.user.loginUser.entity.LoginUser
 import team.springpsring.petpartner.domain.user.loginUser.repository.LoginUserRepository
 
@@ -30,7 +28,7 @@ class LoginUserService(
     }
 
     fun logout(loginId: String):Boolean {
-        val user = loginUserRepository.findByLoginId(loginId)
+        loginUserRepository.findByLoginId(loginId)
             ?: throw EntityNotFoundException("User Not Found")
         loginUserRepository.deleteByLoginId(loginId)
         return true//임의로 넣음. 팀원과 조정할 것
