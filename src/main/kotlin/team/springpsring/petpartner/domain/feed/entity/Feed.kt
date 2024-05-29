@@ -39,6 +39,15 @@ class Feed(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
+
+    fun addComment(comment:Comment){
+        comments.add(comment)
+    }
+
+    fun deleteComment(comment: Comment){
+        comments.remove(comment)
+    }
+
 }
 
 fun Feed.toResponse(): FeedResponse {
