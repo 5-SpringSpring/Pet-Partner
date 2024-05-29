@@ -6,4 +6,5 @@ import team.springpsring.petpartner.domain.user.loginUser.entity.LoginUser
 interface LoginUserRepository: JpaRepository<LoginUser, Long>{
     fun findByLoginId(loginId: String): LoginUser?
     fun deleteByLoginId(loginId: String)
+    fun existsByLoginId(loginId: String):Boolean
 }

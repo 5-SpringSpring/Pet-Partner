@@ -13,16 +13,19 @@ import team.springpsring.petpartner.domain.user.loginUser.repository.LoginUserRe
 class LoginUserService(
     private val loginUserRepository: LoginUserRepository
 ) {
+
     fun login(loginId: String, token: String): Boolean{
-        try {
+        if(loginUserRepository.existsByLoginId(loginId)){
+            loginUserRepository.findByLoginId(loginId)
+                ?.token=token
+        }
+        else{
             loginUserRepository.save(
                 LoginUser(
                     loginId = loginId,
                     token = token
                 )
             )
-        } catch (e: DataIntegrityViolationException) {
-            throw ServiceException("Data Duplication")
         }
         return true
     }
