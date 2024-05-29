@@ -20,7 +20,6 @@ class LoveService(
         val feed=feedRepository.findByIdOrNull(feedId)?:throw NullPointerException("Feed not found")
         val love = Love(
             createLoveRequest.loginId,
-            createLoveRequest.feedId,
             feed = feed
         )
         loveRepository.save(love)
