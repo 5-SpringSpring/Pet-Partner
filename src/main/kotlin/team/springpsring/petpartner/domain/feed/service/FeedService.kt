@@ -13,7 +13,6 @@ import team.springpsring.petpartner.domain.feed.entity.Feed
 import team.springpsring.petpartner.domain.feed.entity.toResponse
 import team.springpsring.petpartner.domain.feed.repository.FeedRepository
 import team.springpsring.petpartner.domain.love.dto.CreateLoveRequest
-import team.springpsring.petpartner.domain.love.dto.LoveResponse
 import team.springpsring.petpartner.domain.love.entity.toResponse
 import team.springpsring.petpartner.domain.love.repository.LoveRepository
 import team.springpsring.petpartner.domain.love.service.LoveService
@@ -44,11 +43,9 @@ class FeedService(
             feed.body,
             feed.images,
             feed.category,
-            feed.loveCnt,
             feed.views++,
             feed.created,
-            comments,
-            loves
+            comments
         )
     }
 
@@ -61,7 +58,7 @@ class FeedService(
                 createFeedRequest.body,
                 createFeedRequest.images,
                 createFeedRequest.category,
-                0, 0,
+                0,
                 createFeedRequest.created
             )
         ).toResponse()

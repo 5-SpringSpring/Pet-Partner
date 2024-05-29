@@ -12,9 +12,7 @@ class Love(
     @Column(name = "login_id",nullable = false)
     var loginId: String,
 
-    @Column(name = "feed_id",nullable = false)
-    var feedId: Long,
-
+    //jpa에서 제공하는 연관관계를 활용하겠다.
     @ManyToOne
     @JoinColumn(name = "feed_id",nullable = false)
     var feed: Feed,
@@ -27,7 +25,6 @@ class Love(
 fun Love.toResponse(): LoveResponse {
     return LoveResponse(
         id = id!!,
-        loginId = loginId,
-        feedId = feedId
+        loginId = loginId
     )
 }
