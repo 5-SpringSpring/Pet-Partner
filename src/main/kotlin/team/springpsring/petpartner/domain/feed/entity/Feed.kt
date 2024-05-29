@@ -2,7 +2,10 @@ package team.springpsring.petpartner.domain.feed.entity
 
 import jakarta.persistence.*
 import team.springpsring.petpartner.domain.feed.comment.entity.Comment
+import team.springpsring.petpartner.domain.feed.comment.entity.toResponse
 import team.springpsring.petpartner.domain.feed.dto.FeedResponse
+import team.springpsring.petpartner.domain.love.entity.Love
+import team.springpsring.petpartner.domain.love.entity.toResponse
 import java.time.LocalDateTime
 
 @Entity
@@ -25,7 +28,7 @@ class Feed(
     var category: Int,
 
     @Column(name = "loves", nullable = false)
-    var loves: Int=0,
+    var loveCnt: Int=0,
 
     @Column(name = "views", nullable = false)
     var views: Int=0,
@@ -35,6 +38,9 @@ class Feed(
 
     @OneToMany(mappedBy = "feed", cascade = [(CascadeType.ALL)], orphanRemoval = true)
     var comments: MutableList<Comment> = mutableListOf(),
+
+    @OneToMany(mappedBy = "feed",cascade = [(CascadeType.ALL)], orphanRemoval = true)
+    var loves : MutableList<Love> = mutableListOf(),
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,7 +53,6 @@ class Feed(
     fun deleteComment(comment: Comment){
         comments.remove(comment)
     }
-
 }
 
 fun Feed.toResponse(): FeedResponse {
@@ -58,8 +63,10 @@ fun Feed.toResponse(): FeedResponse {
         body = body,
         images = images,
         category = category,
-        loves = loves,
+        loveCnt = loveCnt,
         views = views,
         created = created,
+        comments =comments.map{it.toResponse()},
+        loves = loves.map{it.toResponse()}
     )
 }
