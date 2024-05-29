@@ -25,6 +25,7 @@ class CommentService (private val feedRepository: FeedRepository, private val co
             createCommentRequest.createdAt,
             feed
         )
+        feed.addComment(comment)
         commentRepository.save(comment)
 
         return comment.toResponse()
@@ -57,7 +58,7 @@ class CommentService (private val feedRepository: FeedRepository, private val co
         if(name!=comment.name || password !=comment.password){
             throw IllegalArgumentException("Can't update comment")
         }
-
+        feed.deleteComment(comment)
         commentRepository.delete(comment)
     }
 }
