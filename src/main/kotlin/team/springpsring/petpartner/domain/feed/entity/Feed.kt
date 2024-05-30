@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import team.springpsring.petpartner.domain.feed.comment.entity.Comment
 import team.springpsring.petpartner.domain.feed.comment.entity.toResponse
 import team.springpsring.petpartner.domain.feed.dto.FeedResponse
+import team.springpsring.petpartner.domain.love.entity.Love
 import java.time.LocalDateTime
 
 @Entity
@@ -23,7 +24,8 @@ class Feed(
     var images: String,
 
     @Column(name = "category", nullable = false)
-    var category: Int,
+    @Enumerated(EnumType.ORDINAL)
+    var category: CategoryType,
 
     @Column(name = "views", nullable = false)
     var views: Int=0,

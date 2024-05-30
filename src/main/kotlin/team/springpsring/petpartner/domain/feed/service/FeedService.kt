@@ -6,18 +6,16 @@ import org.springframework.transaction.annotation.Transactional
 import team.springpsring.petpartner.domain.feed.comment.entity.toResponse
 import team.springpsring.petpartner.domain.feed.comment.repository.CommentRepository
 import team.springpsring.petpartner.domain.feed.dto.CreateFeedRequest
-import team.springpsring.petpartner.domain.feed.dto.DeleteFeedRequest
 import team.springpsring.petpartner.domain.feed.dto.FeedResponse
 import team.springpsring.petpartner.domain.feed.dto.UpdateFeedRequest
+import team.springpsring.petpartner.domain.feed.entity.CategoryType
 import team.springpsring.petpartner.domain.feed.entity.Feed
 import team.springpsring.petpartner.domain.feed.entity.toResponse
 import team.springpsring.petpartner.domain.feed.repository.FeedRepository
-import team.springpsring.petpartner.domain.love.dto.CreateLoveRequest
 import team.springpsring.petpartner.domain.love.repository.LoveRepository
 import team.springpsring.petpartner.domain.love.service.LoveService
 import team.springpsring.petpartner.domain.user.dto.GetUserInfoRequest
 import team.springpsring.petpartner.domain.user.dto.UserResponse
-import team.springpsring.petpartner.domain.user.entity.User
 import team.springpsring.petpartner.domain.user.service.UserService
 
 @Service
@@ -29,6 +27,11 @@ class FeedService(
     private val userService: UserService
 ) {
 
+    private fun checkUsername(requestUsername:String,entityUsername:String){
+        if(requestUsername!=entityUsername)
+            throw ArithmeticException("userNotMatch")
+    }
+
     @Transactional
     fun checkValidate(token: String):UserResponse{
         return userService.getUserInfo(
@@ -38,6 +41,11 @@ class FeedService(
 
     fun getAllFeeds(): List<FeedResponse> {
         return feedRepository.findAll().map { it.toResponse() }
+    }
+
+    fun getFeedByCategory(category: CategoryType): List<FeedResponse> {
+        return feedRepository.findByCategoryOrderByCreated(category)
+            .map { it.toResponse() }
     }
 
     fun getFeedById(feedId: Long): FeedResponse {
@@ -61,41 +69,44 @@ class FeedService(
     fun createFeed(userInfo:UserResponse,createFeedRequest: CreateFeedRequest): FeedResponse {
         return feedRepository.save(
             Feed(
-                userInfo.username,
-                createFeedRequest.title,
-                createFeedRequest.body,
-                createFeedRequest.images,
-                createFeedRequest.category,
+                name = userInfo.username,
+                title = createFeedRequest.title,
+                body = createFeedRequest.body,
+                images = createFeedRequest.images,
+                category = createFeedRequest.category,
             )
         ).toResponse()
     }
 
     @Transactional
     fun updateFeed(userInfo:UserResponse ,feedId: Long, updateFeedRequest: UpdateFeedRequest): FeedResponse {
-        val feed = feedRepository.findByIdOrNull(feedId) ?: throw NullPointerException("Feed not found")
-        if(feed.name!=userInfo.username) throw ArithmeticException("userNotMatch")
-        val (title, body, images, category) = updateFeedRequest
+        return feedRepository.findByIdOrNull(feedId)
+            ?.let { checkUsername(userInfo.username, it.name)
 
-        feed.title = title
-        feed.body = body
-        feed.images = images
-        feed.category = category
-
-        return feedRepository.save(feed).toResponse()
+                it.title = updateFeedRequest.title
+                it.body = updateFeedRequest.body
+                it.images = updateFeedRequest.images
+                it.category = updateFeedRequest.category
+                it.toResponse()
+            }?: throw NullPointerException("Feed not found")
     }
 
     @Transactional
     fun deleteFeed(userInfo:UserResponse ,feedId: Long) {
-        val feed = feedRepository.findByIdOrNull(feedId) ?: throw NullPointerException("Feed not found")
-        if(feed.name!=userInfo.username) throw ArithmeticException("userNotMatch")
-        feedRepository.delete(feed)
+        feedRepository.findByIdOrNull(feedId)
+            ?.let { checkUsername(userInfo.username, it.name)
+
+                feedRepository.delete(it)
+            } ?: throw NullPointerException("Feed not found")
     }
 
     @Transactional
     fun updateLoveForFeed(feedId: Long, isLove: Boolean, userInfo: UserResponse) {
-        if(isLove){
-            val love = loveRepository.findByFeedIdAndLoginId(feedId,userInfo.loginId)?:throw NullPointerException("Love not found")
-            loveService.deleteLove(love.id!!)
+        if(isLove) {
+            loveRepository.findByFeedIdAndLoginId(feedId, userInfo.loginId)
+                ?.let {
+                    loveService.deleteLove(it.id!!)
+                } ?: throw NullPointerException("Love not found")
         }
         else{
             loveService.createLove(feedId, userInfo.loginId)

@@ -19,9 +19,9 @@ class CommentService (private val feedRepository: FeedRepository, private val co
         val feed = feedRepository.findByIdOrNull(feedId) ?: throw NullPointerException("Feed not found")
         val comment = Comment(
             createCommentRequest.name,
-            createCommentRequest.password,
+           // createCommentRequest.password,
             createCommentRequest.body,
-            loves = 0,
+            //loves = 0,
             createCommentRequest.createdAt,
             feed
         )
@@ -38,9 +38,9 @@ class CommentService (private val feedRepository: FeedRepository, private val co
         val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
         throw NullPointerException("Feed not found")
 
-        if(name!=comment.name || password !=comment.password){
-            throw IllegalArgumentException("Can't update comment")
-        }
+       // if(name!=comment.name || password !=comment.password){
+         //   throw IllegalArgumentException("Can't update comment")
+       // }
 
         comment.body = updateCommentRequest.body
         comment.createdAt =updateCommentRequest.createdAt
@@ -55,9 +55,9 @@ class CommentService (private val feedRepository: FeedRepository, private val co
         val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
         throw NullPointerException("Feed not found")
 
-        if(name!=comment.name || password !=comment.password){
-            throw IllegalArgumentException("Can't update comment")
-        }
+        //if(name!=comment.name || password !=comment.password){
+         //   throw IllegalArgumentException("Can't update comment")
+       // }
         feed.deleteComment(comment)
         commentRepository.delete(comment)
     }

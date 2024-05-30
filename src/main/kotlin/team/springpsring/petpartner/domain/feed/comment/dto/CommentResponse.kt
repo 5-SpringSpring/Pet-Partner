@@ -6,6 +6,6 @@ class CommentResponse(
     val id: Long,
     val name: String,
     val body: String,
-    val loves: Int,
+    //val loves: Int,
     val createdAt: LocalDateTime,
 )

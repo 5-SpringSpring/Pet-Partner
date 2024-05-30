@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 class CreateCommentRequest (
     val name: String,
-    val password: String,
+    //val password: String,
     val body: String,
     val createdAt: LocalDateTime,
 )

@@ -4,10 +4,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import team.springpsring.petpartner.domain.feed.dto.CreateFeedRequest
-import team.springpsring.petpartner.domain.feed.dto.DeleteFeedRequest
-import team.springpsring.petpartner.domain.feed.dto.FeedResponse
-import team.springpsring.petpartner.domain.feed.dto.UpdateFeedRequest
+import team.springpsring.petpartner.domain.feed.dto.*
+import team.springpsring.petpartner.domain.feed.entity.CategoryType
 import team.springpsring.petpartner.domain.feed.service.FeedService
 import team.springpsring.petpartner.domain.love.dto.CreateLoveRequest
 import team.springpsring.petpartner.domain.love.dto.LoveResponse
@@ -18,7 +16,6 @@ import team.springpsring.petpartner.domain.love.service.LoveService
 @RequestMapping("/feeds")
 class FeedController(
     private val feedService: FeedService,
-    private val loveService: LoveService
 ) {
 
     @GetMapping
@@ -35,16 +32,22 @@ class FeedController(
             .body(feedService.getFeedById(feedId))
     }
 
+    @GetMapping("/categories")
+    fun getCategoryFeeds(@RequestParam category: CategoryType)
+    : ResponseEntity<List<FeedResponse>> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(feedService.getFeedByCategory(category))
+    }
+
     @PostMapping
     fun createFeed(@RequestBody createFeedRequest: CreateFeedRequest): ResponseEntity<FeedResponse> {
-        return ResponseEntity
-            .status(HttpStatus.CREATED)
-            .body(
-                feedService.checkValidate(createFeedRequest.token)
-                .let {
-                    feedService.createFeed(it,createFeedRequest)
-                }
-            )
+        return feedService.checkValidate(createFeedRequest.token)
+            .let {
+                ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(feedService.createFeed(it, createFeedRequest))
+            }
     }
 
     @PutMapping("/{feedId}")
@@ -52,41 +55,34 @@ class FeedController(
         @PathVariable feedId: Long,
         @RequestBody updateFeedRequest: UpdateFeedRequest
     ): ResponseEntity<FeedResponse> {
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(
-                feedService.checkValidate(updateFeedRequest.token)
-                .let {
-                    feedService.updateFeed(it,feedId,updateFeedRequest)
-                })
+        return feedService.checkValidate(updateFeedRequest.token)
+            .let {
+                ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(feedService.updateFeed(it, feedId, updateFeedRequest))
+            }
     }
 
     @DeleteMapping("/{feedId}")
     fun deleteFeed(@PathVariable feedId: Long, @RequestBody deleteFeedRequest: DeleteFeedRequest): ResponseEntity<Unit> {
-        return ResponseEntity
-            .status(HttpStatus.NO_CONTENT)
-            .body(
-                feedService.checkValidate(deleteFeedRequest.token)
-                    .let {
-                        feedService.deleteFeed(it,feedId)
-                    }
-            )
+        return feedService.checkValidate(deleteFeedRequest.token)
+            .let {
+                ResponseEntity
+                    .status(HttpStatus.NO_CONTENT)
+                    .body(feedService.deleteFeed(it, feedId))
+            }
     }
 
     @PostMapping("/{feedId}/loves")
     fun updateLoveForFeed(@PathVariable feedId:Long, @RequestParam isLove:Boolean, @RequestBody createLoveRequest: CreateLoveRequest): ResponseEntity<Unit> {
-        return ResponseEntity
-            .status(
-                if(isLove)
-                HttpStatus.NO_CONTENT
-                else
-                HttpStatus.CREATED)
-            .body(
-                feedService.checkValidate(createLoveRequest.token)
-                    .let {
-                        feedService.updateLoveForFeed(feedId,isLove,it)
-                    }
-            )
+        return feedService.checkValidate(createLoveRequest.token)
+            .let {
+                ResponseEntity
+                    .status(
+                        if (isLove) HttpStatus.NO_CONTENT
+                        else HttpStatus.CREATED)
+                    .body(feedService.updateLoveForFeed(feedId, isLove, it))
+            }
     }
 
 

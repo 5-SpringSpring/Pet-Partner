@@ -39,7 +39,7 @@ class LoginUserService(
 
     fun checkLoginStatus(loginId: String, token: String){
         if(!loginUserRepository.existsByLoginIdAndToken(loginId,token)) {
-            throw DataIntegrityViolationException("Token UnMatching")
+            throw DataIntegrityViolationException("Invalid Login User")
         }
     }
 }
