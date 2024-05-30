@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import team.springpsring.petpartner.domain.feed.comment.dto.CommentResponse
 import team.springpsring.petpartner.domain.feed.comment.dto.CommentRequest
-import team.springpsring.petpartner.domain.feed.comment.dto.UpdateCommentRequest
 import team.springpsring.petpartner.domain.feed.comment.entity.Comment
 import team.springpsring.petpartner.domain.feed.comment.entity.toResponse
 import team.springpsring.petpartner.domain.feed.comment.repository.CommentRepository

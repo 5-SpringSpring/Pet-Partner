@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import team.springpsring.petpartner.domain.feed.comment.dto.CommentResponse
 import team.springpsring.petpartner.domain.feed.comment.dto.CommentRequest
-import team.springpsring.petpartner.domain.feed.comment.dto.UpdateCommentRequest
 import team.springpsring.petpartner.domain.feed.comment.service.CommentService
 import team.springpsring.petpartner.domain.user.dto.GetUserInfoRequest
 
