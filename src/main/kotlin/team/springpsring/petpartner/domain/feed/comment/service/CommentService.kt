@@ -4,25 +4,29 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import team.springpsring.petpartner.domain.feed.comment.dto.CommentResponse
-import team.springpsring.petpartner.domain.feed.comment.dto.CreateCommentRequest
-import team.springpsring.petpartner.domain.feed.comment.dto.UpdateCommentRequest
+import team.springpsring.petpartner.domain.feed.comment.dto.CommentRequest
 import team.springpsring.petpartner.domain.feed.comment.entity.Comment
 import team.springpsring.petpartner.domain.feed.comment.entity.toResponse
 import team.springpsring.petpartner.domain.feed.comment.repository.CommentRepository
 import team.springpsring.petpartner.domain.feed.repository.FeedRepository
+import team.springpsring.petpartner.domain.user.dto.GetUserInfoRequest
+import team.springpsring.petpartner.domain.user.dto.UserResponse
+import team.springpsring.petpartner.domain.user.service.UserService
 
 @Service
-class CommentService (private val feedRepository: FeedRepository, private val commentRepository: CommentRepository){
+class CommentService(
+    private val feedRepository: FeedRepository,
+    private val commentRepository: CommentRepository,
+    private val userService: UserService
+){
 
     @Transactional
-    fun createComment(feedId:Long, createCommentRequest: CreateCommentRequest): CommentResponse {
+    fun createComment(feedId:Long, commentRequest: CommentRequest, username:String): CommentResponse {
         val feed = feedRepository.findByIdOrNull(feedId) ?: throw NullPointerException("Feed not found")
         val comment = Comment(
-            createCommentRequest.name,
-           // createCommentRequest.password,
-            createCommentRequest.body,
-            //loves = 0,
-            createCommentRequest.createdAt,
+            username,
+            commentRequest.body,
+            commentRequest.createdAt,
             feed
         )
         feed.addComment(comment)
@@ -32,33 +36,35 @@ class CommentService (private val feedRepository: FeedRepository, private val co
     }
 
     @Transactional
-    fun updateComment(feedId: Long, commentId: Long, updateCommentRequest: UpdateCommentRequest,
-                      name:String, password:String): CommentResponse{
-
+    fun updateComment(feedId: Long, commentId: Long, commentRequest: CommentRequest): CommentResponse{
         val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
         throw NullPointerException("Feed not found")
 
-       // if(name!=comment.name || password !=comment.password){
-         //   throw IllegalArgumentException("Can't update comment")
-       // }
-
-        comment.body = updateCommentRequest.body
-        comment.createdAt =updateCommentRequest.createdAt
+        comment.body = commentRequest.body
+        comment.createdAt =commentRequest.createdAt
 
         return commentRepository.save(comment).toResponse()
     }
 
     @Transactional
-    fun deleteComment(feedId: Long,commentId: Long, name:String, password:String){
+    fun deleteComment(feedId: Long,commentId: Long){
 
         val feed = feedRepository.findByIdOrNull(feedId) ?: throw NullPointerException("Feed not found")
         val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
         throw NullPointerException("Feed not found")
 
-        //if(name!=comment.name || password !=comment.password){
-         //   throw IllegalArgumentException("Can't update comment")
-       // }
         feed.deleteComment(comment)
         commentRepository.delete(comment)
+    }
+
+    fun validateToken(token:String):UserResponse{
+        return userService.getUserInfo(GetUserInfoRequest(token))
+    }
+
+    fun checkOwner(token:String, commentId:Long, feedId:Long):Boolean{
+        val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
+        throw NullPointerException("Feed not found")
+
+        return validateToken(token).username == comment.username
     }
 }
