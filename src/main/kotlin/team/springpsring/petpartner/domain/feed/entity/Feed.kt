@@ -4,7 +4,6 @@ import jakarta.persistence.*
 import team.springpsring.petpartner.domain.feed.comment.entity.Comment
 import team.springpsring.petpartner.domain.feed.comment.entity.toResponse
 import team.springpsring.petpartner.domain.feed.dto.FeedResponse
-import team.springpsring.petpartner.domain.love.entity.Love
 import java.time.LocalDateTime
 
 @Entity

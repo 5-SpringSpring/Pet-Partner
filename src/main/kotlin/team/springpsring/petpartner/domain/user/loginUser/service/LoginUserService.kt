@@ -2,7 +2,6 @@ package team.springpsring.petpartner.domain.user.loginUser.service
 
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
-import org.hibernate.service.spi.ServiceException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import team.springpsring.petpartner.domain.user.loginUser.entity.LoginUser

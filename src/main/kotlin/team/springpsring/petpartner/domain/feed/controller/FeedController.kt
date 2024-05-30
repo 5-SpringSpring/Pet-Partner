@@ -2,14 +2,11 @@ package team.springpsring.petpartner.domain.feed.controller
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import team.springpsring.petpartner.domain.feed.dto.*
 import team.springpsring.petpartner.domain.feed.entity.CategoryType
 import team.springpsring.petpartner.domain.feed.service.FeedService
 import team.springpsring.petpartner.domain.love.dto.CreateLoveRequest
-import team.springpsring.petpartner.domain.love.dto.LoveResponse
-import team.springpsring.petpartner.domain.love.service.LoveService
 
 
 @RestController
