@@ -8,14 +8,11 @@ import team.springpsring.petpartner.domain.feed.comment.dto.CreateCommentRequest
 import team.springpsring.petpartner.domain.feed.comment.dto.UpdateCommentRequest
 import team.springpsring.petpartner.domain.feed.comment.service.CommentService
 import team.springpsring.petpartner.domain.user.dto.GetUserInfoRequest
-import team.springpsring.petpartner.domain.user.service.UserService
-import team.springpsring.petpartner.domain.user.entity.User
 
 @RequestMapping("/feeds/{feedId}/comments")
 @RestController
 class CommentController(
     private val commentService: CommentService,
-    private val userService: UserService,
 ) {
 
     @PostMapping
