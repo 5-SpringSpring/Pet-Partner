@@ -38,10 +38,8 @@ class LoginUserService(
     }
 
     fun checkLoginStatus(loginId: String, token: String){
-        if(loginUserRepository.existsByLoginId(loginId)) {
-            if (loginUserRepository.findByLoginId(loginId)?.token != token)
-                throw DataIntegrityViolationException("Token UnMatching")
+        if(!loginUserRepository.existsByLoginIdAndToken(loginId,token)) {
+            throw DataIntegrityViolationException("Token UnMatching")
         }
-        else throw DataIntegrityViolationException("Login not found")
     }
 }
