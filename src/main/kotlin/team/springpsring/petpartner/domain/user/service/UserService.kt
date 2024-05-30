@@ -23,9 +23,9 @@ class UserService(
 ){
     //!!!GlobalExceptionHandler 적용 후 Exception 종류 개선해야함
 
-    @Transactional
-    fun validateLoginIdFromToken(token:String):User {
+    private fun validateLoginIdFromToken(token:String):User {
         return jwtUtil.validateToken(token).let {
+            loginService.checkLoginStatus(it, token)
             userRepository.findByLoginId(it)
                 ?: throw EntityNotFoundException("마 그런 아 없다")
         }
@@ -62,7 +62,7 @@ class UserService(
 
     @Transactional
     fun updatePassword(request:UpdateUserPasswordRequest):Boolean {
-        validateLoginIdFromToken(request.token)
+        validateLoginIdFromToken(request.user.token)
             .let {
                 if(encoder.verifyPassword(request.oldPassword,it.password)){
                     if(!encoder.verifyPassword(request.newPassword,it.password)){

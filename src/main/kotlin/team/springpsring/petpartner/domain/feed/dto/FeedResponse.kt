@@ -1,6 +1,7 @@
 package team.springpsring.petpartner.domain.feed.dto
 
 import team.springpsring.petpartner.domain.feed.comment.dto.CommentResponse
+import team.springpsring.petpartner.domain.feed.entity.CategoryType
 import java.time.LocalDateTime
 
 data class FeedResponse(
@@ -9,7 +10,7 @@ data class FeedResponse(
     val title: String,
     val body:String,
     val images: String,
-    val category:Int,
+    val category:CategoryType,
     val views:Int,
     val created: LocalDateTime,
     val comments: List<CommentResponse>,

@@ -23,13 +23,14 @@ class Feed(
     var images: String,
 
     @Column(name = "category", nullable = false)
-    var category: Int,
+    @Enumerated(EnumType.ORDINAL)
+    var category: CategoryType,
 
     @Column(name = "views", nullable = false)
     var views: Int=0,
 
     @Column(name = "created_at", nullable = false)
-    var created: LocalDateTime,
+    var created: LocalDateTime=LocalDateTime.now(),
 
     @OneToMany(mappedBy = "feed", cascade = [(CascadeType.ALL)], orphanRemoval = true)
     var comments: MutableList<Comment> = mutableListOf(),
