@@ -3,7 +3,6 @@ package team.springpsring.petpartner.domain.love.controller
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import team.springpsring.petpartner.domain.love.dto.CreateLoveRequest
 import team.springpsring.petpartner.domain.love.dto.LoveResponse
 import team.springpsring.petpartner.domain.love.service.LoveService
 

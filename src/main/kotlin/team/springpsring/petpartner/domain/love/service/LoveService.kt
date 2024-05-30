@@ -4,7 +4,6 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import team.springpsring.petpartner.domain.feed.repository.FeedRepository
-import team.springpsring.petpartner.domain.love.dto.CreateLoveRequest
 import team.springpsring.petpartner.domain.love.dto.LoveResponse
 import team.springpsring.petpartner.domain.love.entity.Love
 import team.springpsring.petpartner.domain.love.entity.toResponse

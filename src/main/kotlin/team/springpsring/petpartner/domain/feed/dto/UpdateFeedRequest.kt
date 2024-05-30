@@ -1,6 +1,7 @@
 package team.springpsring.petpartner.domain.feed.dto
 
 import team.springpsring.petpartner.domain.feed.entity.CategoryType
+import team.springpsring.petpartner.domain.user.dto.GetUserInfoRequest
 import java.time.LocalDateTime
 
 data class UpdateFeedRequest (
@@ -9,5 +10,5 @@ data class UpdateFeedRequest (
     val images : String,
     val category:CategoryType,
     val created: LocalDateTime,
-    val token:String
+    val user: GetUserInfoRequest
 )
