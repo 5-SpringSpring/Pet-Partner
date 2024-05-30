@@ -10,6 +10,7 @@ import java.time.LocalDateTime
 class Comment(
 
     @Column(name = "name", nullable = false)
+
     var username: String,
 
     @Column(name = "body", nullable = false)
