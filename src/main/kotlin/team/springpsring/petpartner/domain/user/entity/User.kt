@@ -1,5 +1,6 @@
 package team.springpsring.petpartner.domain.user.entity
 
+import team.springpsring.petpartner.domain.user.dto.SignUpUserRequest
 import jakarta.persistence.*
 import team.springpsring.petpartner.domain.user.dto.UserResponse
 

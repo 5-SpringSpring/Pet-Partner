@@ -34,7 +34,7 @@ class UserController(private val userService: UserService) {
             .body(userService.getUserInfo(userInfoRequest))
     }
 
-    @PatchMapping("/update-password")
+    @PatchMapping("/password")
     fun updatePassword(@RequestBody updateRequest: UpdateUserPasswordRequest)
             : ResponseEntity<Any> {
         return ResponseEntity
@@ -42,7 +42,7 @@ class UserController(private val userService: UserService) {
             .body(userService.updatePassword(updateRequest))
     }
 
-    @DeleteMapping("/logout")
+    @DeleteMapping("/{loginId}")
     fun logout(@RequestParam("loginId") loginId: String)
             : ResponseEntity<Any> {
         return ResponseEntity
