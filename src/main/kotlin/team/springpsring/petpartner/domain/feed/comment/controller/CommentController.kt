@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import team.springpsring.petpartner.domain.feed.comment.dto.CommentResponse
-import team.springpsring.petpartner.domain.feed.comment.dto.CreateCommentRequest
+import team.springpsring.petpartner.domain.feed.comment.dto.CommentRequest
 import team.springpsring.petpartner.domain.feed.comment.dto.UpdateCommentRequest
 import team.springpsring.petpartner.domain.feed.comment.service.CommentService
 import team.springpsring.petpartner.domain.user.dto.GetUserInfoRequest
@@ -18,14 +18,14 @@ class CommentController(
     @PostMapping
     fun createComment(
         @PathVariable feedId: Long,
-        @RequestBody createCommentRequest: CreateCommentRequest,
+        @RequestBody commentRequest: CommentRequest,
         getUserInfoRequest: GetUserInfoRequest
     ): ResponseEntity<CommentResponse> {
 
         return commentService.validateToken(getUserInfoRequest.token).let{
             ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(commentService.createComment(feedId, createCommentRequest,it.username))
+                .body(commentService.createComment(feedId, commentRequest,it.username))
         }
     }
 
@@ -35,14 +35,14 @@ class CommentController(
     fun updateComment(
         @PathVariable feedId: Long,
         @PathVariable commentId: Long,
-        @RequestBody updateCommentRequest: UpdateCommentRequest,
+        @RequestBody commentRequest: CommentRequest,
         getUserInfoRequest: GetUserInfoRequest,
         username:String
     ): ResponseEntity<CommentResponse> {
         return commentService.checkOwner(getUserInfoRequest.token,feedId,commentId).let{
             ResponseEntity
                 .status(HttpStatus.OK)
-                .body(commentService.updateComment(feedId, commentId, updateCommentRequest))
+                .body(commentService.updateComment(feedId, commentId, commentRequest))
         }
     }
 

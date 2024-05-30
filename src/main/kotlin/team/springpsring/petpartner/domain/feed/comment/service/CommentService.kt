@@ -4,7 +4,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import team.springpsring.petpartner.domain.feed.comment.dto.CommentResponse
-import team.springpsring.petpartner.domain.feed.comment.dto.CreateCommentRequest
+import team.springpsring.petpartner.domain.feed.comment.dto.CommentRequest
 import team.springpsring.petpartner.domain.feed.comment.dto.UpdateCommentRequest
 import team.springpsring.petpartner.domain.feed.comment.entity.Comment
 import team.springpsring.petpartner.domain.feed.comment.entity.toResponse
@@ -22,12 +22,12 @@ class CommentService(
 ){
 
     @Transactional
-    fun createComment(feedId:Long, createCommentRequest: CreateCommentRequest, username:String): CommentResponse {
+    fun createComment(feedId:Long, commentRequest: CommentRequest, username:String): CommentResponse {
         val feed = feedRepository.findByIdOrNull(feedId) ?: throw NullPointerException("Feed not found")
         val comment = Comment(
             username,
-            createCommentRequest.body,
-            createCommentRequest.createdAt,
+            commentRequest.body,
+            commentRequest.createdAt,
             feed
         )
         feed.addComment(comment)
@@ -37,12 +37,12 @@ class CommentService(
     }
 
     @Transactional
-    fun updateComment(feedId: Long, commentId: Long, updateCommentRequest: UpdateCommentRequest): CommentResponse{
+    fun updateComment(feedId: Long, commentId: Long, commentRequest: CommentRequest): CommentResponse{
         val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
         throw NullPointerException("Feed not found")
 
-        comment.body = updateCommentRequest.body
-        comment.createdAt =updateCommentRequest.createdAt
+        comment.body = commentRequest.body
+        comment.createdAt =commentRequest.createdAt
 
         return commentRepository.save(comment).toResponse()
     }
