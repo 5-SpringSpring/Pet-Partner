@@ -23,7 +23,8 @@ class UserService(
 ){
     //!!!GlobalExceptionHandler 적용 후 Exception 종류 개선해야함
 
-    private fun validateLoginIdFromToken(token:String):User {
+    @Transactional
+    fun validateLoginIdFromToken(token:String):User {
         return jwtUtil.validateToken(token).let {
             userRepository.findByLoginId(it)
                 ?: throw EntityNotFoundException("마 그런 아 없다")
