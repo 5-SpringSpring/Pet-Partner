@@ -37,6 +37,17 @@ class FeedController(
             .body(feedService.getFeedByCategory(category))
     }
 
+    @PostMapping("/username")
+    fun getUsernameFeeds(@RequestBody getUsernameFeedRequest: GetUsernameFeedRequest)
+            : ResponseEntity<List<FeedResponse>> {
+        return feedService.checkValidate(getUsernameFeedRequest.token)
+            .let {
+                ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(feedService.getFeedByUsername(it))
+            }
+    }
+
     @PostMapping
     fun createFeed(@RequestBody createFeedRequest: CreateFeedRequest): ResponseEntity<FeedResponse> {
         return feedService.checkValidate(createFeedRequest.token)
@@ -81,6 +92,4 @@ class FeedController(
                     .body(feedService.updateLoveForFeed(feedId, isLove, it))
             }
     }
-
-
 }

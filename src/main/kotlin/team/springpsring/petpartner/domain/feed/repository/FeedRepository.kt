@@ -5,5 +5,6 @@ import team.springpsring.petpartner.domain.feed.entity.CategoryType
 import team.springpsring.petpartner.domain.feed.entity.Feed
 
 interface FeedRepository : JpaRepository<Feed, Long> {
-    fun findByCategoryOrderByCreated(categoryType: CategoryType):List<Feed>
+    fun findByCategoryOrderByCreatedDesc(categoryType: CategoryType):List<Feed>
+    fun findByNameOrderByCreatedDesc(name:String):List<Feed>
 }

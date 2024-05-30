@@ -44,7 +44,12 @@ class FeedService(
     }
 
     fun getFeedByCategory(category: CategoryType): List<FeedResponse> {
-        return feedRepository.findByCategoryOrderByCreated(category)
+        return feedRepository.findByCategoryOrderByCreatedDesc(category)
+            .map { it.toResponse() }
+    }
+
+    fun getFeedByUsername(userInfo: UserResponse): List<FeedResponse> {
+        return feedRepository.findByNameOrderByCreatedDesc(userInfo.username)
             .map { it.toResponse() }
     }
 
