@@ -16,10 +16,10 @@ class LoveService(
     private val feedRepository: FeedRepository,) {
 
     @Transactional
-    fun createLove(feedId:Long,createLoveRequest: CreateLoveRequest): LoveResponse {
+    fun createLove(feedId:Long, loginId:String): LoveResponse {
         val feed=feedRepository.findByIdOrNull(feedId)?:throw NullPointerException("Feed not found")
         val love = Love(
-            createLoveRequest.loginId,
+            loginId,
             feed = feed
         )
         loveRepository.save(love)

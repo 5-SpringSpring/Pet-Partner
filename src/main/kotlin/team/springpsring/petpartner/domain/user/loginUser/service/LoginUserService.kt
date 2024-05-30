@@ -36,4 +36,12 @@ class LoginUserService(
         loginUserRepository.deleteByLoginId(loginId)
         return true//임의로 넣음. 팀원과 조정할 것
     }
+
+    fun checkLoginStatus(loginId: String, token: String){
+        if(loginUserRepository.existsByLoginId(loginId)) {
+            if (loginUserRepository.findByLoginId(loginId)?.token != token)
+                throw DataIntegrityViolationException("Token UnMatching")
+        }
+        else throw DataIntegrityViolationException("Login not found")
+    }
 }

@@ -8,4 +8,5 @@ data class UpdateFeedRequest (
     val images : String,
     val category:Int,
     val created: LocalDateTime,
+    val token:String
 )

@@ -29,7 +29,7 @@ class Feed(
     var views: Int=0,
 
     @Column(name = "created_at", nullable = false)
-    var created: LocalDateTime,
+    var created: LocalDateTime=LocalDateTime.now(),
 
     @OneToMany(mappedBy = "feed", cascade = [(CascadeType.ALL)], orphanRemoval = true)
     var comments: MutableList<Comment> = mutableListOf(),
