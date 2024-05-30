@@ -3,7 +3,6 @@ package team.springpsring.petpartner.domain.feed.comment.entity
 import jakarta.persistence.*
 import team.springpsring.petpartner.domain.feed.comment.dto.CommentResponse
 import team.springpsring.petpartner.domain.feed.entity.Feed
-import team.springpsring.petpartner.domain.user.entity.User
 import java.time.LocalDateTime
 
 @Entity
