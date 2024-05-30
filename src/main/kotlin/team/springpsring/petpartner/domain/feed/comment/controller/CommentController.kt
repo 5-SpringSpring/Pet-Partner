@@ -39,10 +39,10 @@ class CommentController(
         getUserInfoRequest: GetUserInfoRequest,
         username:String
     ): ResponseEntity<CommentResponse> {
-        return commentService.checkOwner(getUserInfoRequest.token, username).let{
+        return commentService.checkOwner(getUserInfoRequest.token,feedId,commentId).let{
             ResponseEntity
                 .status(HttpStatus.OK)
-                .body(commentService.updateComment(feedId, commentId, updateCommentRequest, username))
+                .body(commentService.updateComment(feedId, commentId, updateCommentRequest))
         }
     }
 
@@ -51,13 +51,12 @@ class CommentController(
         @PathVariable feedId: Long,
         @PathVariable commentId: Long,
         getUserInfoRequest: GetUserInfoRequest,
-        username:String
     ): ResponseEntity<Unit> {
 
-        return commentService.checkOwner(getUserInfoRequest.token, username).let {
+        return commentService.checkOwner(getUserInfoRequest.token,feedId,commentId).let {
             ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
-                .body(commentService.deleteComment(feedId, commentId, username))
+                .body(commentService.deleteComment(feedId, commentId))
         }
     }
 }

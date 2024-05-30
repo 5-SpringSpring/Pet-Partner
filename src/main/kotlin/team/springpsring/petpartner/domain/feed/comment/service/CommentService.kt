@@ -37,7 +37,7 @@ class CommentService(
     }
 
     @Transactional
-    fun updateComment(feedId: Long, commentId: Long, updateCommentRequest: UpdateCommentRequest,username:String): CommentResponse{
+    fun updateComment(feedId: Long, commentId: Long, updateCommentRequest: UpdateCommentRequest): CommentResponse{
         val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
         throw NullPointerException("Feed not found")
 
@@ -48,7 +48,7 @@ class CommentService(
     }
 
     @Transactional
-    fun deleteComment(feedId: Long,commentId: Long, username:String){
+    fun deleteComment(feedId: Long,commentId: Long){
 
         val feed = feedRepository.findByIdOrNull(feedId) ?: throw NullPointerException("Feed not found")
         val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
@@ -62,7 +62,10 @@ class CommentService(
         return userService.getUserInfo(GetUserInfoRequest(token))
     }
 
-    fun checkOwner(token:String, username:String):Boolean{
-        return validateToken(token).username == username
+    fun checkOwner(token:String, commentId:Long, feedId:Long):Boolean{
+        val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
+        throw NullPointerException("Feed not found")
+
+        return validateToken(token).username == comment.username
     }
 }
