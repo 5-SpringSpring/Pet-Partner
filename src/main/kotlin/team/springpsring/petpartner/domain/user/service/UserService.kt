@@ -12,7 +12,6 @@ import team.springpsring.petpartner.domain.user.dto.*
 import team.springpsring.petpartner.domain.user.entity.User
 import team.springpsring.petpartner.domain.user.entity.toResponse
 import team.springpsring.petpartner.domain.user.loginUser.service.LoginUserService
-import team.springpsring.petpartner.domain.user.validemail.service.ValidEmailService
 import javax.naming.AuthenticationException
 
 @Service
@@ -33,14 +32,14 @@ class UserService(
     }
 
     @Transactional
-    fun signUpUser(request: SignUpUserRequest):Boolean{
+    fun signUpUser(request: SignUpUserRequest):UserResponse{
+        val user=request.toEntity(encoder.hashPassword(request.password))
         try {
-            userRepository.save(request.toEntity(
-                encoder.hashPassword(request.password)))
+            userRepository.save(user)
         } catch (e: DataIntegrityViolationException) {
             throw ServiceException("Data Duplication")
         }
-        return true//임의로 넣음. 팀원과 조정할 것
+        return user.toResponse()
     }
 
     @Transactional
@@ -69,11 +68,11 @@ class UserService(
                     if(!encoder.verifyPassword(request.newPassword,it.password)){
                         it.password=encoder.hashPassword(request.newPassword)
                     }
-                    else throw AuthenticationException("바뀐게 없노")
+                    else throw AuthenticationException("User Password Not changed")
                 }
                 else throw AuthenticationException("User Password Not Match")
             }
-        return true //팀원이랑 협의 볼 것
+        return true
     }
 
     @Transactional

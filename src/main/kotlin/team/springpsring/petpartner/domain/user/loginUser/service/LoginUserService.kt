@@ -12,11 +12,9 @@ import team.springpsring.petpartner.domain.user.loginUser.repository.LoginUserRe
 class LoginUserService(
     private val loginUserRepository: LoginUserRepository
 ) {
-
     fun login(loginId: String, token: String): Boolean{
         if(loginUserRepository.existsByLoginId(loginId)){
-            loginUserRepository.findByLoginId(loginId)
-                ?.token=token
+            loginUserRepository.findByLoginId(loginId)?.token=token
         }
         else{
             loginUserRepository.save(
@@ -30,10 +28,8 @@ class LoginUserService(
     }
 
     fun logout(loginId: String):Boolean {
-        loginUserRepository.findByLoginId(loginId)
-            ?: throw EntityNotFoundException("User Not Found")
         loginUserRepository.deleteByLoginId(loginId)
-        return true//임의로 넣음. 팀원과 조정할 것
+        return true
     }
 
     fun checkLoginStatus(loginId: String, token: String){
