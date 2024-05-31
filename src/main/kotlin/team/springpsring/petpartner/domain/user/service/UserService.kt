@@ -12,6 +12,7 @@ import team.springpsring.petpartner.domain.user.dto.*
 import team.springpsring.petpartner.domain.user.entity.User
 import team.springpsring.petpartner.domain.user.entity.toResponse
 import team.springpsring.petpartner.domain.user.loginUser.service.LoginUserService
+import team.springpsring.petpartner.domain.user.validemail.service.ValidEmailService
 import javax.naming.AuthenticationException
 
 @Service
