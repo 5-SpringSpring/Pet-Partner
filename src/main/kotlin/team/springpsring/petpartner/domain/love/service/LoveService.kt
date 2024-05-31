@@ -33,4 +33,9 @@ class LoveService(
         val love = loveRepository.findByFeedIdAndLoginId(feedId, loginId)?: throw EntityNotFoundException("Love not found")
         loveRepository.delete(love)
     }
+
+    @Transactional
+    fun countLove(feedId:Long):Int{
+        return loveRepository.countLoveByFeedId(feedId)
+    }
 }

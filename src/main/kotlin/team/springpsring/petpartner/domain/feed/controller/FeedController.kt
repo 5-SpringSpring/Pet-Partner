@@ -87,11 +87,13 @@ class FeedController(
 
     @PostMapping("/{feedId}/loves")
     fun updateLoveForFeed(
-        @PathVariable feedId: Long, @RequestParam isLove: Boolean,
+        @PathVariable feedId: Long,
         @RequestBody getUserInfoRequest: GetUserInfoRequest)
             : ResponseEntity<Unit> {
+
         return feedService.checkValidate(getUserInfoRequest.token)
             .let {
+                val isLove = feedService.isLove(feedId,it)
                 ResponseEntity
                     .status(
                         if (isLove) HttpStatus.NO_CONTENT

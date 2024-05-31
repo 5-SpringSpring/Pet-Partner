@@ -11,6 +11,7 @@ import team.springpsring.petpartner.domain.feed.entity.CategoryType
 import team.springpsring.petpartner.domain.feed.entity.Feed
 import team.springpsring.petpartner.domain.feed.entity.toResponse
 import team.springpsring.petpartner.domain.feed.repository.FeedRepository
+import team.springpsring.petpartner.domain.love.repository.LoveRepository
 import team.springpsring.petpartner.domain.love.service.LoveService
 import team.springpsring.petpartner.domain.user.dto.GetUserInfoRequest
 import team.springpsring.petpartner.domain.user.dto.UserResponse
@@ -22,9 +23,10 @@ class FeedService(
     private val feedRepository: FeedRepository,
     private val commentRepository: CommentRepository,
     private val loveService: LoveService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val loveRepository: LoveRepository
 ) {
-    private fun checkUsername(requestUsername:String,entityUsername:String){
+    private fun checkUsername(requestUsername:String, entityUsername:String){
         if(requestUsername!=entityUsername)
             throw AuthenticationException("userNotMatch")
     }
@@ -42,12 +44,12 @@ class FeedService(
 
     fun getFeedByCategory(category: CategoryType): List<FeedResponse> {
         return feedRepository.findByCategoryOrderByCreatedDesc(category)
-            .map { it.toResponse() }
+            .map { it.toResponse(loveService.countLove(it.id!!)) }
     }
 
     fun getFeedByUsername(userInfo: UserResponse): List<FeedResponse> {
         return feedRepository.findByNameOrderByCreatedDesc(userInfo.username)
-            .map { it.toResponse() }
+            .map { it.toResponse(loveService.countLove(it.id!!)) }
     }
 
     fun getFeedById(feedId: Long): FeedResponse {
@@ -63,6 +65,7 @@ class FeedService(
             feed.category,
             feed.views++,
             feed.created,
+            loveService.countLove(feedId),
             comments
         )
     }
@@ -88,7 +91,7 @@ class FeedService(
                 it.body = feedRequest.body
                 it.images = feedRequest.images
                 it.category = feedRequest.category
-                it.toResponse()
+                it.toResponse(loveService.countLove(feedId))
             }?: throw NullPointerException("Feed not found")
     }
 
@@ -104,5 +107,10 @@ class FeedService(
     fun updateLoveForFeed(feedId: Long, isLove: Boolean, userInfo: UserResponse) {
         if(isLove) loveService.deleteLove(feedId,userInfo)
         else loveService.createLove(feedId, userInfo.loginId)
+    }
+
+    @Transactional
+    fun isLove(feedId:Long, userInfo:UserResponse):Boolean{
+        return loveRepository.existsByFeedIdAndLoginId(feedId, userInfo.loginId)
     }
 }
