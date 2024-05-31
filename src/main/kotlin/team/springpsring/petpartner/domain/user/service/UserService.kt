@@ -3,7 +3,6 @@ package team.springpsring.petpartner.domain.user.service
 import team.springpsring.petpartner.domain.user.repository.UserRepository
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
-import org.hibernate.service.spi.ServiceException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import team.springpsring.petpartner.domain.security.hash.BCHash
@@ -27,7 +26,7 @@ class UserService(
         return jwtUtil.validateToken(token).let {
             loginService.checkLoginStatus(it, token)
             userRepository.findByLoginId(it)
-                ?: throw EntityNotFoundException("마 그런 아 없다")
+                ?: throw EntityNotFoundException("User Not Found")
         }
     }
 
@@ -37,7 +36,7 @@ class UserService(
         try {
             userRepository.save(user)
         } catch (e: DataIntegrityViolationException) {
-            throw ServiceException("Data Duplication")
+            throw DataIntegrityViolationException("Data Duplication")
         }
         return user.toResponse()
     }
@@ -56,8 +55,7 @@ class UserService(
 
     @Transactional
     fun getUserInfo(request:GetUserInfoRequest):UserResponse {
-        return validateLoginIdFromToken(request.token)
-            .toResponse()
+        return validateLoginIdFromToken(request.token).toResponse()
     }
 
     @Transactional
@@ -76,8 +74,9 @@ class UserService(
     }
 
     @Transactional
-    fun logoutUser(loginId:String):Boolean{
-        loginService.logout(loginId)
+    fun logoutUser(request:GetUserInfoRequest):Boolean{
+        val user=validateLoginIdFromToken(request.token)
+        loginService.logout(user.loginId)
         return true
     }
 }

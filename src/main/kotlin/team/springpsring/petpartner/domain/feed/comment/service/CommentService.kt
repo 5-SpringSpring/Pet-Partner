@@ -1,5 +1,6 @@
 package team.springpsring.petpartner.domain.feed.comment.service
 
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -36,7 +37,7 @@ class CommentService(
     @Transactional
     fun updateComment(feedId: Long, commentId: Long, commentRequest: CommentRequest): CommentResponse{
         val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
-        throw NullPointerException("Feed not found")
+        throw EntityNotFoundException("Feed not found")
 
         comment.body = commentRequest.body
         return commentRepository.save(comment).toResponse()
@@ -46,7 +47,7 @@ class CommentService(
     fun deleteComment(feedId: Long,commentId: Long){
         val feed = feedRepository.findByIdOrNull(feedId) ?: throw NullPointerException("Feed not found")
         val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
-        throw NullPointerException("Feed not found")
+        throw EntityNotFoundException("Comment not found")
 
         feed.deleteComment(comment)
         commentRepository.delete(comment)
@@ -58,7 +59,7 @@ class CommentService(
 
     fun checkOwner(token:String, feedId:Long, commentId:Long):Boolean{
         val comment = commentRepository.findByFeedIdAndId(feedId, commentId)
-            ?: throw NullPointerException("${feedId}, ${commentId}, not found")
+            ?: throw EntityNotFoundException("Comment not found")
         return validateToken(token).username == comment.username
     }
 }

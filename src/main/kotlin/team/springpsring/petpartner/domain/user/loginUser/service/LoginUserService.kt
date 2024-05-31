@@ -1,11 +1,10 @@
 package team.springpsring.petpartner.domain.user.loginUser.service
 
-import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import team.springpsring.petpartner.domain.user.loginUser.entity.LoginUser
 import team.springpsring.petpartner.domain.user.loginUser.repository.LoginUserRepository
+import javax.naming.AuthenticationException
 
 @Service
 @Transactional
@@ -34,7 +33,7 @@ class LoginUserService(
 
     fun checkLoginStatus(loginId: String, token: String){
         if(!loginUserRepository.existsByLoginIdAndToken(loginId,token)) {
-            throw DataIntegrityViolationException("Invalid Login User")
+            throw AuthenticationException("Invalid Login User")
         }
     }
 }

@@ -15,17 +15,18 @@ import team.springpsring.petpartner.domain.love.service.LoveService
 import team.springpsring.petpartner.domain.user.dto.GetUserInfoRequest
 import team.springpsring.petpartner.domain.user.dto.UserResponse
 import team.springpsring.petpartner.domain.user.service.UserService
+import javax.naming.AuthenticationException
 
 @Service
 class FeedService(
     private val feedRepository: FeedRepository,
     private val commentRepository: CommentRepository,
-    private val loveService: LoveService,//서비스랑 리포 둘다?
+    private val loveService: LoveService,
     private val userService: UserService
 ) {
     private fun checkUsername(requestUsername:String,entityUsername:String){
         if(requestUsername!=entityUsername)
-            throw ArithmeticException("userNotMatch")
+            throw AuthenticationException("userNotMatch")
     }
 
     @Transactional
