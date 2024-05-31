@@ -4,7 +4,7 @@ import team.springpsring.petpartner.domain.feed.entity.CategoryType
 import team.springpsring.petpartner.domain.user.dto.GetUserInfoRequest
 import java.time.LocalDateTime
 
-data class CreateFeedRequest(
+data class FeedRequest(
     val title: String,
     val body:String,
     val images : String,
