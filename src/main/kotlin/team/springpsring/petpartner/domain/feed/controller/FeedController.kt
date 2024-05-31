@@ -14,7 +14,6 @@ import team.springpsring.petpartner.domain.user.dto.GetUserInfoRequest
 class FeedController(
     private val feedService: FeedService,
 ) {
-
     @GetMapping
     fun getAllFeeds()
             : ResponseEntity<List<FeedResponse>> {
@@ -39,6 +38,7 @@ class FeedController(
             .body(feedService.getFeedByCategory(category))
     }
 
+    //이 부분을 고민을 해봐야한다고 생각해요.. 여기서 되는게 맞나? 이런 느낌으로다가...
     @PostMapping("/username")
     fun getUsernameFeeds(@RequestBody getUsernameFeedRequest: GetUserInfoRequest)
             : ResponseEntity<List<FeedResponse>> {
@@ -51,33 +51,33 @@ class FeedController(
     }
 
     @PostMapping
-    fun createFeed(@RequestBody createFeedRequest: CreateFeedRequest)
+    fun createFeed(@RequestBody feedRequest: FeedRequest)
             : ResponseEntity<FeedResponse> {
-        return feedService.checkValidate(createFeedRequest.user.token)
+        return feedService.checkValidate(feedRequest.user.token)
             .let {
                 ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(feedService.createFeed(it, createFeedRequest))
+                    .body(feedService.createFeed(it, feedRequest))
             }
     }
 
     @PutMapping("/{feedId}")
     fun updateFeed(
         @PathVariable feedId: Long,
-        @RequestBody updateFeedRequest: UpdateFeedRequest)
+        @RequestBody feedRequest: FeedRequest)
             : ResponseEntity<FeedResponse> {
-        return feedService.checkValidate(updateFeedRequest.user.token)
+        return feedService.checkValidate(feedRequest.user.token)
             .let {
                 ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(feedService.updateFeed(it, feedId, updateFeedRequest))
+                    .body(feedService.updateFeed(it, feedId, feedRequest))
             }
     }
 
     @DeleteMapping("/{feedId}")
-    fun deleteFeed(@PathVariable feedId: Long, @RequestBody deleteFeedRequest: GetUserInfoRequest)
+    fun deleteFeed(@PathVariable feedId: Long, @RequestBody getUserInfoRequest: GetUserInfoRequest)
             : ResponseEntity<Unit> {
-        return feedService.checkValidate(deleteFeedRequest.token)
+        return feedService.checkValidate(getUserInfoRequest.token)
             .let {
                 ResponseEntity
                     .status(HttpStatus.NO_CONTENT)
@@ -87,15 +87,18 @@ class FeedController(
 
     @PostMapping("/{feedId}/loves")
     fun updateLoveForFeed(
-        @PathVariable feedId: Long, @RequestParam isLove: Boolean,
-        @RequestBody createLoveRequest: GetUserInfoRequest)
+        @PathVariable feedId: Long,
+        @RequestBody getUserInfoRequest: GetUserInfoRequest)
             : ResponseEntity<Unit> {
-        return feedService.checkValidate(createLoveRequest.token)
+
+        return feedService.checkValidate(getUserInfoRequest.token)
             .let {
+                val isLove = feedService.isLove(feedId,it)
                 ResponseEntity
                     .status(
                         if (isLove) HttpStatus.NO_CONTENT
-                        else HttpStatus.CREATED)
+                        else HttpStatus.CREATED
+                    )
                     .body(feedService.updateLoveForFeed(feedId, isLove, it))
             }
     }

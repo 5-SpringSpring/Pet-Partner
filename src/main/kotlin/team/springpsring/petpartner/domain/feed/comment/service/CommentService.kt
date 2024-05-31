@@ -1,5 +1,6 @@
 package team.springpsring.petpartner.domain.feed.comment.service
 
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,15 +20,13 @@ class CommentService(
     private val commentRepository: CommentRepository,
     private val userService: UserService
 ){
-
     @Transactional
     fun createComment(feedId:Long, commentRequest: CommentRequest, username:String): CommentResponse {
         val feed = feedRepository.findByIdOrNull(feedId) ?: throw NullPointerException("Feed not found")
         val comment = Comment(
-            username,
-            commentRequest.body,
-            commentRequest.createdAt,
-            feed
+            username = username,
+            body = commentRequest.body,
+            feed = feed
         )
         feed.addComment(comment)
         commentRepository.save(comment)
@@ -38,20 +37,17 @@ class CommentService(
     @Transactional
     fun updateComment(feedId: Long, commentId: Long, commentRequest: CommentRequest): CommentResponse{
         val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
-        throw NullPointerException("Feed not found")
+        throw EntityNotFoundException("Feed not found")
 
         comment.body = commentRequest.body
-        comment.createdAt =commentRequest.createdAt
-
         return commentRepository.save(comment).toResponse()
     }
 
     @Transactional
     fun deleteComment(feedId: Long,commentId: Long){
-
         val feed = feedRepository.findByIdOrNull(feedId) ?: throw NullPointerException("Feed not found")
         val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
-        throw NullPointerException("Feed not found")
+        throw EntityNotFoundException("Comment not found")
 
         feed.deleteComment(comment)
         commentRepository.delete(comment)
@@ -61,10 +57,9 @@ class CommentService(
         return userService.getUserInfo(GetUserInfoRequest(token))
     }
 
-    fun checkOwner(token:String, commentId:Long, feedId:Long):Boolean{
-        val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
-        throw NullPointerException("Feed not found")
-
+    fun checkOwner(token:String, feedId:Long, commentId:Long):Boolean{
+        val comment = commentRepository.findByFeedIdAndId(feedId, commentId)
+            ?: throw EntityNotFoundException("Comment not found")
         return validateToken(token).username == comment.username
     }
 }

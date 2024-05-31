@@ -1,5 +1,6 @@
 package team.springpsring.petpartner.domain.love.service
 
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -8,6 +9,7 @@ import team.springpsring.petpartner.domain.love.dto.LoveResponse
 import team.springpsring.petpartner.domain.love.entity.Love
 import team.springpsring.petpartner.domain.love.entity.toResponse
 import team.springpsring.petpartner.domain.love.repository.LoveRepository
+import team.springpsring.petpartner.domain.user.dto.UserResponse
 
 @Service
 class LoveService(
@@ -26,9 +28,14 @@ class LoveService(
     }
 
     @Transactional
-    fun deleteLove(loveId: Long) {
-        val love = loveRepository.findByIdOrNull(loveId)?: throw NullPointerException("Love not found")
+    fun deleteLove(feedId:Long, userInfo:UserResponse) {
+        val loginId = userInfo.loginId
+        val love = loveRepository.findByFeedIdAndLoginId(feedId, loginId)?: throw EntityNotFoundException("Love not found")
         loveRepository.delete(love)
     }
 
+    @Transactional
+    fun countLove(feedId:Long):Int{
+        return loveRepository.countLoveByFeedId(feedId)
+    }
 }

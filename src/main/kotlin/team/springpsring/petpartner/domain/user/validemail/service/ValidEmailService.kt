@@ -1,6 +1,6 @@
 package team.springpsring.petpartner.domain.user.validemail.service
 
-import jakarta.persistence.EntityNotFoundException
+import org.springframework.mail.MailSendException
 import org.springframework.stereotype.Service
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.random.Random
@@ -20,12 +20,12 @@ class ValidEmailService(
         val message = createMessage(sendEmail, passCode)
         try {
             mailSender.send(message)
-        } catch (e: Exception) {
-            throw EntityNotFoundException(e.message)
+        } catch (e: MailSendException) {
+            throw MailSendException("Error : $e", e)
         }
     }
 
-    private fun generatePassCode(length: Int = 5): Int {
+    private fun generatePassCode(): Int {
         return Random.nextInt(10000, 100000)
     }
 

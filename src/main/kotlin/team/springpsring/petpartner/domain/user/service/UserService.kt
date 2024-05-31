@@ -3,7 +3,6 @@ package team.springpsring.petpartner.domain.user.service
 import team.springpsring.petpartner.domain.user.repository.UserRepository
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
-import org.hibernate.service.spi.ServiceException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import team.springpsring.petpartner.domain.security.hash.BCHash
@@ -12,7 +11,6 @@ import team.springpsring.petpartner.domain.user.dto.*
 import team.springpsring.petpartner.domain.user.entity.User
 import team.springpsring.petpartner.domain.user.entity.toResponse
 import team.springpsring.petpartner.domain.user.loginUser.service.LoginUserService
-import team.springpsring.petpartner.domain.user.validemail.service.ValidEmailService
 import javax.naming.AuthenticationException
 
 @Service
@@ -28,19 +26,19 @@ class UserService(
         return jwtUtil.validateToken(token).let {
             loginService.checkLoginStatus(it, token)
             userRepository.findByLoginId(it)
-                ?: throw EntityNotFoundException("마 그런 아 없다")
+                ?: throw EntityNotFoundException("User Not Found")
         }
     }
 
     @Transactional
-    fun signUpUser(request: SignUpUserRequest):Boolean{
+    fun signUpUser(request: SignUpUserRequest):UserResponse{
+        val user=request.toEntity(encoder.hashPassword(request.password))
         try {
-            userRepository.save(request.toEntity(
-                encoder.hashPassword(request.password)))
+            userRepository.save(user)
         } catch (e: DataIntegrityViolationException) {
-            throw ServiceException("Data Duplication")
+            throw DataIntegrityViolationException("Data Duplication")
         }
-        return true//임의로 넣음. 팀원과 조정할 것
+        return user.toResponse()
     }
 
     @Transactional
@@ -57,8 +55,7 @@ class UserService(
 
     @Transactional
     fun getUserInfo(request:GetUserInfoRequest):UserResponse {
-        return validateLoginIdFromToken(request.token)
-            .toResponse()
+        return validateLoginIdFromToken(request.token).toResponse()
     }
 
     @Transactional
@@ -69,16 +66,17 @@ class UserService(
                     if(!encoder.verifyPassword(request.newPassword,it.password)){
                         it.password=encoder.hashPassword(request.newPassword)
                     }
-                    else throw AuthenticationException("바뀐게 없노")
+                    else throw AuthenticationException("User Password Not changed")
                 }
                 else throw AuthenticationException("User Password Not Match")
             }
-        return true //팀원이랑 협의 볼 것
+        return true
     }
 
     @Transactional
-    fun logoutUser(loginId:String):Boolean{
-        loginService.logout(loginId)
+    fun logoutUser(request:GetUserInfoRequest):Boolean{
+        val user=validateLoginIdFromToken(request.token)
+        loginService.logout(user.loginId)
         return true
     }
 }

@@ -43,10 +43,10 @@ class UserController(private val userService: UserService) {
     }
 
     @DeleteMapping("/logout")
-    fun logout(@RequestParam("loginId") loginId: String)
+    fun logout(@RequestBody deleteRequest: GetUserInfoRequest)
             : ResponseEntity<Any> {
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(userService.logoutUser(loginId))
+            .body(userService.logoutUser(deleteRequest))
     }
 }

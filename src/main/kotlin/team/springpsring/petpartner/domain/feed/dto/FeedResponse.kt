@@ -13,5 +13,6 @@ data class FeedResponse(
     val category:CategoryType,
     val views:Int,
     val created: LocalDateTime,
+    val loveCnt:Int,
     val comments: List<CommentResponse>,
 )

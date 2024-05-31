@@ -13,14 +13,12 @@ import team.springpsring.petpartner.domain.user.dto.GetUserInfoRequest
 class CommentController(
     private val commentService: CommentService,
 ) {
-
     @PostMapping
     fun createComment(
         @PathVariable feedId: Long,
         @RequestBody commentRequest: CommentRequest,
         getUserInfoRequest: GetUserInfoRequest
     ): ResponseEntity<CommentResponse> {
-
         return commentService.validateToken(getUserInfoRequest.token).let{
             ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -28,15 +26,12 @@ class CommentController(
         }
     }
 
-
-    //로직을 변경해야함... 굳이 username을 받아올 필요가 있는지 진지하게 생각해보도록하라.
     @PutMapping("/{commentId}")
     fun updateComment(
         @PathVariable feedId: Long,
         @PathVariable commentId: Long,
         @RequestBody commentRequest: CommentRequest,
-        getUserInfoRequest: GetUserInfoRequest,
-        username:String
+        getUserInfoRequest: GetUserInfoRequest
     ): ResponseEntity<CommentResponse> {
         return commentService.checkOwner(getUserInfoRequest.token,feedId,commentId).let{
             ResponseEntity
@@ -51,7 +46,6 @@ class CommentController(
         @PathVariable commentId: Long,
         getUserInfoRequest: GetUserInfoRequest,
     ): ResponseEntity<Unit> {
-
         return commentService.checkOwner(getUserInfoRequest.token,feedId,commentId).let {
             ResponseEntity
                 .status(HttpStatus.NO_CONTENT)

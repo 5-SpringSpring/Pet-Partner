@@ -10,14 +10,13 @@ import java.time.LocalDateTime
 class Comment(
 
     @Column(name = "name", nullable = false)
-
     var username: String,
 
     @Column(name = "body", nullable = false)
     var body: String,
 
     @Column(name = "created_at", nullable = false)
-    var createdAt: LocalDateTime,
+    var createdAt: LocalDateTime=LocalDateTime.now(),
 
     @ManyToOne
     @JoinColumn(name = "feed_id", nullable = false)
