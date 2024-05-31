@@ -9,6 +9,5 @@ data class FeedRequest(
     val body:String,
     val images : String,
     val category:CategoryType,
-    val created: LocalDateTime,
     val user: GetUserInfoRequest
 )

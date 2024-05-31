@@ -19,15 +19,13 @@ class CommentService(
     private val commentRepository: CommentRepository,
     private val userService: UserService
 ){
-
     @Transactional
     fun createComment(feedId:Long, commentRequest: CommentRequest, username:String): CommentResponse {
         val feed = feedRepository.findByIdOrNull(feedId) ?: throw NullPointerException("Feed not found")
         val comment = Comment(
-            username,
-            commentRequest.body,
-            commentRequest.createdAt,
-            feed
+            username = username,
+            body = commentRequest.body,
+            feed = feed
         )
         feed.addComment(comment)
         commentRepository.save(comment)
@@ -41,14 +39,11 @@ class CommentService(
         throw NullPointerException("Feed not found")
 
         comment.body = commentRequest.body
-        comment.createdAt =commentRequest.createdAt
-
         return commentRepository.save(comment).toResponse()
     }
 
     @Transactional
     fun deleteComment(feedId: Long,commentId: Long){
-
         val feed = feedRepository.findByIdOrNull(feedId) ?: throw NullPointerException("Feed not found")
         val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
         throw NullPointerException("Feed not found")
@@ -61,10 +56,9 @@ class CommentService(
         return userService.getUserInfo(GetUserInfoRequest(token))
     }
 
-    fun checkOwner(token:String, commentId:Long, feedId:Long):Boolean{
-        val comment = commentRepository.findByFeedIdAndId(feedId, commentId) ?:
-        throw NullPointerException("Feed not found")
-
+    fun checkOwner(token:String, feedId:Long, commentId:Long):Boolean{
+        val comment = commentRepository.findByFeedIdAndId(feedId, commentId)
+            ?: throw NullPointerException("${feedId}, ${commentId}, not found")
         return validateToken(token).username == comment.username
     }
 }
