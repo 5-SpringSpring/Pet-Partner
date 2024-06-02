@@ -3,7 +3,6 @@ package team.springpsring.petpartner.domain.feed.service
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import team.springpsring.petpartner.domain.feed.comment.repository.CommentRepository
 import team.springpsring.petpartner.domain.feed.dto.FeedRequest
 import team.springpsring.petpartner.domain.feed.dto.FeedResponse
 import team.springpsring.petpartner.domain.feed.entity.CategoryType
@@ -19,7 +18,6 @@ import javax.naming.AuthenticationException
 @Service
 class FeedService(
     private val feedRepository: FeedRepository,
-    private val commentRepository: CommentRepository,
     private val loveService: LoveService,
     private val userService: UserService,
 ) {
