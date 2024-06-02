@@ -17,10 +17,10 @@ class LoveService(
     private val feedRepository: FeedRepository,) {
 
     @Transactional
-    fun createLove(feedId:Long, loginId:String): LoveResponse {
+    fun createLove(feedId:Long, username:String): LoveResponse {
         val feed=feedRepository.findByIdOrNull(feedId)?:throw NullPointerException("Feed not found")
         val love = Love(
-            loginId,
+            username,
             feed = feed
         )
         loveRepository.save(love)
@@ -29,8 +29,8 @@ class LoveService(
 
     @Transactional
     fun deleteLove(feedId:Long, userInfo:UserResponse) {
-        val loginId = userInfo.loginId
-        val love = loveRepository.findByFeedIdAndLoginId(feedId, loginId)?: throw EntityNotFoundException("Love not found")
+        val username = userInfo.username
+        val love = loveRepository.findByFeedIdAndUsername(feedId, username)?: throw EntityNotFoundException("Love not found")
         loveRepository.delete(love)
     }
 

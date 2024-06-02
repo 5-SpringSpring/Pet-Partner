@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*
 import team.springpsring.petpartner.domain.feed.dto.*
 import team.springpsring.petpartner.domain.feed.entity.CategoryType
 import team.springpsring.petpartner.domain.feed.service.FeedService
+import team.springpsring.petpartner.domain.love.dto.LoveResponse
 import team.springpsring.petpartner.domain.user.dto.GetUserInfoRequest
 
 
@@ -101,5 +102,14 @@ class FeedController(
                     )
                     .body(feedService.updateLoveForFeed(feedId, isLove, it))
             }
+    }
+
+    @GetMapping("/{feedId}/loves")
+    fun getLoveUser(
+        @PathVariable feedId: Long)
+            : ResponseEntity<List<LoveResponse>> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(feedService.getLoveUser(feedId))
     }
 }

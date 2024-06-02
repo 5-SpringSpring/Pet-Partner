@@ -4,7 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository
 import team.springpsring.petpartner.domain.love.entity.Love
 
 interface LoveRepository : JpaRepository<Love, Long> {
-    fun findByFeedIdAndLoginId(feedId:Long, loginId:String):Love?
+    fun findByFeedIdAndUsername(feedId:Long, username:String):Love?
     fun countLoveByFeedId(feedId:Long):Int
-    fun existsByFeedIdAndLoginId(feedId:Long, loginId:String):Boolean
+    fun existsByFeedIdAndUsername(feedId:Long, username:String):Boolean
+    fun findByFeedId(feedId:Long):List<Love>
 }
