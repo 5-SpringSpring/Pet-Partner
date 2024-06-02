@@ -1,6 +1,7 @@
 package team.springpsring.petpartner.domain.user.controller
 
 
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -40,6 +41,17 @@ class UserController(private val userService: UserService) {
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(userService.updatePassword(updateRequest))
+    }
+
+    @PatchMapping("/update-username")
+    fun updateUsername(@RequestBody updateUserNameRequest: UpdateUserNameRequest):ResponseEntity<Any>{
+        return try {
+            ResponseEntity
+                .status(HttpStatus.OK)
+                .body(userService.updateUsername(updateUserNameRequest))
+        }catch (e:DataIntegrityViolationException){
+            throw DataIntegrityViolationException("Data Duplication")
+        }
     }
 
     @DeleteMapping("/logout")
