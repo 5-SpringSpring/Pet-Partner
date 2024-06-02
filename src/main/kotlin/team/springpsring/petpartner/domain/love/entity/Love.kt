@@ -7,8 +7,8 @@ import team.springpsring.petpartner.domain.love.dto.LoveResponse
 @Entity
 @Table(name = "love")
 class Love(
-    @Column(name = "login_id",nullable = false)
-    var loginId: String,
+    @Column(name = "username",nullable = false)
+    var username: String,
 
     @ManyToOne
     @JoinColumn(name = "feed_id",nullable = false)
@@ -22,6 +22,6 @@ class Love(
 fun Love.toResponse(): LoveResponse {
     return LoveResponse(
         id = id!!,
-        loginId = loginId
+        username = username
     )
 }

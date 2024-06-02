@@ -11,6 +11,8 @@ import team.springpsring.petpartner.domain.feed.entity.CategoryType
 import team.springpsring.petpartner.domain.feed.entity.Feed
 import team.springpsring.petpartner.domain.feed.entity.toResponse
 import team.springpsring.petpartner.domain.feed.repository.FeedRepository
+import team.springpsring.petpartner.domain.love.dto.LoveResponse
+import team.springpsring.petpartner.domain.love.entity.toResponse
 import team.springpsring.petpartner.domain.love.repository.LoveRepository
 import team.springpsring.petpartner.domain.love.service.LoveService
 import team.springpsring.petpartner.domain.user.dto.GetUserInfoRequest
@@ -106,11 +108,16 @@ class FeedService(
     @Transactional
     fun updateLoveForFeed(feedId: Long, isLove: Boolean, userInfo: UserResponse) {
         if(isLove) loveService.deleteLove(feedId,userInfo)
-        else loveService.createLove(feedId, userInfo.loginId)
+        else loveService.createLove(feedId, userInfo.username)
     }
 
     @Transactional
     fun isLove(feedId:Long, userInfo:UserResponse):Boolean{
-        return loveRepository.existsByFeedIdAndLoginId(feedId, userInfo.loginId)
+        return loveRepository.existsByFeedIdAndUsername(feedId, userInfo.username)
     }
+
+    fun getLoveUser(feedId: Long):List<LoveResponse>{
+        return loveRepository.findByFeedId(feedId).map{it.toResponse()}
+    }
+
 }
