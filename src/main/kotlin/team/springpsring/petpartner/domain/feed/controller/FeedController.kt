@@ -6,9 +6,7 @@ import org.springframework.web.bind.annotation.*
 import team.springpsring.petpartner.domain.feed.dto.*
 import team.springpsring.petpartner.domain.feed.entity.CategoryType
 import team.springpsring.petpartner.domain.feed.service.FeedService
-import team.springpsring.petpartner.domain.love.dto.LoveResponse
 import team.springpsring.petpartner.domain.user.dto.GetUserInfoRequest
-
 
 @RestController
 @RequestMapping("/feeds")
@@ -39,7 +37,6 @@ class FeedController(
             .body(feedService.getFeedByCategory(category))
     }
 
-    //이 부분을 고민을 해봐야한다고 생각해요.. 여기서 되는게 맞나? 이런 느낌으로다가...
     @PostMapping("/username")
     fun getUsernameFeeds(@RequestBody getUsernameFeedRequest: GetUserInfoRequest)
             : ResponseEntity<List<FeedResponse>> {
@@ -84,32 +81,5 @@ class FeedController(
                     .status(HttpStatus.NO_CONTENT)
                     .body(feedService.deleteFeed(it, feedId))
             }
-    }
-
-    @PostMapping("/{feedId}/loves")
-    fun updateLoveForFeed(
-        @PathVariable feedId: Long,
-        @RequestBody getUserInfoRequest: GetUserInfoRequest)
-            : ResponseEntity<Unit> {
-
-        return feedService.checkValidate(getUserInfoRequest.token)
-            .let {
-                val isLove = feedService.isLove(feedId,it)
-                ResponseEntity
-                    .status(
-                        if (isLove) HttpStatus.NO_CONTENT
-                        else HttpStatus.CREATED
-                    )
-                    .body(feedService.updateLoveForFeed(feedId, isLove, it))
-            }
-    }
-
-    @GetMapping("/{feedId}/loves")
-    fun getLoveUser(
-        @PathVariable feedId: Long)
-            : ResponseEntity<List<LoveResponse>> {
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(feedService.getLoveUser(feedId))
     }
 }

@@ -3,17 +3,12 @@ package team.springpsring.petpartner.domain.feed.service
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import team.springpsring.petpartner.domain.feed.comment.entity.toResponse
-import team.springpsring.petpartner.domain.feed.comment.repository.CommentRepository
 import team.springpsring.petpartner.domain.feed.dto.FeedRequest
 import team.springpsring.petpartner.domain.feed.dto.FeedResponse
 import team.springpsring.petpartner.domain.feed.entity.CategoryType
 import team.springpsring.petpartner.domain.feed.entity.Feed
 import team.springpsring.petpartner.domain.feed.entity.toResponse
 import team.springpsring.petpartner.domain.feed.repository.FeedRepository
-import team.springpsring.petpartner.domain.love.dto.LoveResponse
-import team.springpsring.petpartner.domain.love.entity.toResponse
-import team.springpsring.petpartner.domain.love.repository.LoveRepository
 import team.springpsring.petpartner.domain.love.service.LoveService
 import team.springpsring.petpartner.domain.user.dto.GetUserInfoRequest
 import team.springpsring.petpartner.domain.user.dto.UserResponse
@@ -23,10 +18,8 @@ import javax.naming.AuthenticationException
 @Service
 class FeedService(
     private val feedRepository: FeedRepository,
-    private val commentRepository: CommentRepository,
     private val loveService: LoveService,
     private val userService: UserService,
-    private val loveRepository: LoveRepository
 ) {
     private fun checkUsername(requestUsername:String, entityUsername:String){
         if(requestUsername!=entityUsername)
@@ -41,7 +34,7 @@ class FeedService(
     }
 
     fun getAllFeeds(): List<FeedResponse> {
-        return feedRepository.findAll().map { it.toResponse() }
+        return feedRepository.findAll().map { it.toResponse(loveService.countLove(it.id!!)) }
     }
 
     fun getFeedByCategory(category: CategoryType): List<FeedResponse> {
@@ -54,22 +47,11 @@ class FeedService(
             .map { it.toResponse(loveService.countLove(it.id!!)) }
     }
 
+    @Transactional
     fun getFeedById(feedId: Long): FeedResponse {
         val feed = feedRepository.findByIdOrNull(feedId) ?: throw NullPointerException("Feed not found")
-        val comments = commentRepository.findById(feedId).map { listOf(it.toResponse()) }.orElseGet { emptyList() }
-
-        return FeedResponse(
-            feedId,
-            feed.name,
-            feed.title,
-            feed.body,
-            feed.images,
-            feed.category,
-            feed.views++,
-            feed.created,
-            loveService.countLove(feedId),
-            comments
-        )
+        feed.views++
+        return feed.toResponse(loveService.countLove(feedId), isComment = true)
     }
 
     @Transactional
@@ -104,20 +86,4 @@ class FeedService(
                 feedRepository.delete(it)
             } ?: throw NullPointerException("Feed not found")
     }
-
-    @Transactional
-    fun updateLoveForFeed(feedId: Long, isLove: Boolean, userInfo: UserResponse) {
-        if(isLove) loveService.deleteLove(feedId,userInfo)
-        else loveService.createLove(feedId, userInfo.username)
-    }
-
-    @Transactional
-    fun isLove(feedId:Long, userInfo:UserResponse):Boolean{
-        return loveRepository.existsByFeedIdAndUsername(feedId, userInfo.username)
-    }
-
-    fun getLoveUser(feedId: Long):List<LoveResponse>{
-        return loveRepository.findByFeedId(feedId).map{it.toResponse()}
-    }
-
 }

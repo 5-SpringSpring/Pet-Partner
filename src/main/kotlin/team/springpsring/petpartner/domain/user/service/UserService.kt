@@ -20,8 +20,6 @@ class UserService(
     private val jwtUtil: JwtUtil,
     private val encoder: BCHash,
 ){
-    //!!!GlobalExceptionHandler 적용 후 Exception 종류 개선해야함
-
     private fun validateLoginIdFromToken(token:String):User {
         return jwtUtil.validateToken(token).let {
             loginService.checkLoginStatus(it, token)
@@ -77,6 +75,17 @@ class UserService(
     fun logoutUser(request:GetUserInfoRequest):Boolean{
         val user=validateLoginIdFromToken(request.token)
         loginService.logout(user.loginId)
+        return true
+    }
+
+    @Transactional
+    fun updateUsername(request:UpdateUserNameRequest):Boolean {
+        validateLoginIdFromToken(request.user.token)
+            .let {
+                if (encoder.verifyPassword(request.password, it.password)) {
+                    it.username = request.username
+                } else throw AuthenticationException("User Password Not Match")
+            }
         return true
     }
 }

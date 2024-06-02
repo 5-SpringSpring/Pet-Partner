@@ -22,6 +22,7 @@ class Love(
 fun Love.toResponse(): LoveResponse {
     return LoveResponse(
         id = id!!,
-        username = username
+        username = username,
+        feedId = feed.id!!
     )
 }

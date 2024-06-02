@@ -8,4 +8,5 @@ interface LoveRepository : JpaRepository<Love, Long> {
     fun countLoveByFeedId(feedId:Long):Int
     fun existsByFeedIdAndUsername(feedId:Long, username:String):Boolean
     fun findByFeedId(feedId:Long):List<Love>
+    fun findByUsername(username:String):List<Love>
 }

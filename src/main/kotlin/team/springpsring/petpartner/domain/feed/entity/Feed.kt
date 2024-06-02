@@ -51,7 +51,7 @@ class Feed(
     }
 }
 
-fun Feed.toResponse(loveCnt: Int=0): FeedResponse {
+fun Feed.toResponse(loveCnt: Int=0, isComment: Boolean= false): FeedResponse {
     return FeedResponse(
         id = id!!,
         name = name,
@@ -62,6 +62,6 @@ fun Feed.toResponse(loveCnt: Int=0): FeedResponse {
         views = views,
         created = created,
         loveCnt = loveCnt,
-        comments =comments.map{it.toResponse()}
+        comments = if(isComment)comments.map { it.toResponse() } else emptyList()
     )
 }
