@@ -152,7 +152,7 @@ Pet Partner
 ```
 
 ## 데모 영상
-
+https://youtu.be/X3psA6ZDDgQ
 ---
 
 # 협업 전략
